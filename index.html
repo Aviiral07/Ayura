@@ -3,94 +3,551 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Doctor Detection & Verification System</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>HealthVerify Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    html { scroll-behavior: smooth; }
+    section { margin-bottom: 50px; }
+    .nav-section { padding: 14px 0; background: #2c3e50; }
+    .nav-section ul { display: flex; justify-content: center; gap: 18px; list-style: none; margin:0;}
+    .nav-section a { color: white; font-weight: bold; text-decoration: none; padding: 8px 16px; border-radius: 6px; }
+    .nav-section a:hover, .nav-section a.active { background: #3498db; }
+    #chatbot-interface { display: flex; flex-direction: column; gap: 15px; }
+    .chat-window { height: 350px; border: 1px solid #e1e8ed; border-radius: 10px; padding: 15px; overflow-y: auto; background: #ffffff; display: flex; flex-direction: column; gap: 10px;}
+    .message { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4;}
+    .bot-message { background: #e1f5fe; color: #3498db; align-self: flex-start; border-bottom-left-radius: 5px;}
+    .user-message { background: #d5f4e6; color: #27ae60; align-self: flex-end; border-bottom-right-radius: 5px;}
+    .accordion-item { border: 1px solid #e1e8ed; margin-bottom: 10px; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+    .accordion-question { background: #f8f9fa; padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #2c3e50; cursor: pointer; transition: background 0.2s; font-size: 1.05rem;}
+    .accordion-question:hover {background: #eff2f4;}
+    .accordion-icon { font-size: 1.2rem; color: #3498db; transition: transform 0.3s ease;}
+    .accordion-answer { padding: 0 25px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; background: white; color: #555;}
+    .accordion-answer p { padding: 15px 0; border-top: 1px solid #ecf0f1; margin: 0;}
+    .accordion-item.active .accordion-question { background: #ecf0f1; color: #3498db;}
+    .accordion-item.active .accordion-icon { transform: rotate(45deg);}
+    .report-header { background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important;}
+    .submit-report-btn { background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);}
+    .submit-report-btn:hover { box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3); transform: translateY(-2px);}
+    .result-section.report-submitted { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); color: #e74c3c; border: 2px solid #e74c3c;}
+    .contact-header { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;}
+    .send-btn { background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);}
+    .send-btn:hover { box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3);}
+    .policy-header { background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%) !important;}
+    .faqs-header { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;}
+    .faqs-container { padding: 40px 30px; background: white;}
+    .contact-info { background: #f8f9fa; padding: 30px; border-radius: 10px; margin-top: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+    .contact-info h3 { color: #2c3e50; margin-bottom: 15px; text-align: center;}
+    .contact-detail { display: flex; align-items: center; margin-bottom: 15px; font-size: 1.05rem; color: #555;}
+    .contact-detail span { color: #3498db; font-size: 1.5rem; margin-right: 15px;}
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🏥 Doctor Verification System</h1>
-            <p>Verify the authenticity of medical practitioners instantly</p>
+    <header class="main-header">
+        <div class="container header-content">
+            <h1 class="logo">HealthVerify</h1>
         </div>
-
-        <div class="form-section">
-            <form id="verificationForm">
-                <div class="form-group">
-                    <label for="doctorName">Doctor's Full Name *</label>
-                    <input type="text" id="doctorName" name="doctorName" required placeholder="Enter doctor's full name">
+    </header>
+    <nav class="nav-section">
+        <ul>
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#appointment">Appointment</a></li>
+            <li><a href="#chatbot">AI Chatbot</a></li>
+            <li><a href="#verification">Verify Doctor</a></li>
+            <li><a href="#report">Report</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#faqs">FAQs</a></li>
+            <li><a href="#privacy">Privacy</a></li>
+            <li><a href="#terms">Terms</a></li>
+        </ul>
+    </nav>
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="hero-section">
+            <div class="container">
+                <h2>Your Trustworthy Health Companion</h2>
+                <p>Verify doctor credentials, book appointments, and report fraudulent activity for a safer healthcare experience.</p>
+                <div class="cta-buttons">
+                    <a href="#verification" class="btn primary-btn">Start Verification Now</a>
+                    <a href="#appointment" class="btn secondary-btn">Book an Appointment</a>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="registrationNumber">Registration Number *</label>
-                        <input type="text" id="registrationNumber" name="registrationNumber" required placeholder="e.g., MH12345">
+            </div>
+            <div class="features-section">
+                <div class="container info-grid">
+                    <div class="info-card">
+                        <h3>✅ Verification System</h3>
+                        <p>Instant cross-reference with official medical council databases.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>📅 Appointment Booking</h3>
+                        <p>Schedule visits with verified practitioners easily and securely.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🤖 AI Health Assistant</h3>
+                        <p>Get preliminary health information and guidance 24/7.</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🚨 Report Fraud</h3>
+                        <p>Contribute to a safer community by reporting fake practitioners.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Appointment Section -->
+        <section id="appointment" class="form-container">
+            <div class="header appointment-header">
+                <h1>📅 Book an Appointment</h1>
+                <p>Schedule your visit with a verified medical professional.</p>
+            </div>
+            <div class="form-section">
+                <form id="appointmentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientName">Your Full Name *</label>
+                            <input type="text" id="patientName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" required placeholder="name@example.com">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="state">State *</label>
-                        <select id="state" name="state" required>
-                            <option value="">Select State</option>
-                            <option value="Maharashtra">Maharashtra</option>
-                            <option value="Delhi">Delhi</option>
-                            <option value="Karnataka">Karnataka</option>
-                            <option value="Tamil Nadu">Tamil Nadu</option>
-                            <option value="Gujarat">Gujarat</option>
-                            <option value="Rajasthan">Rajasthan</option>
-                            <option value="West Bengal">West Bengal</option>
-                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                            <option value="Punjab">Punjab</option>
+                        <label for="doctorSelect">Select Verified Doctor *</label>
+                        <select id="doctorSelect" required>
+                            <option value="">Choose a Doctor</option>
+                            <option value="Rajesh Kumar, Cardiology">Dr. Rajesh Kumar (Cardiology)</option>
+                            <option value="Priya Sharma, Pediatrics">Dr. Priya Sharma (Pediatrics)</option>
+                            <option value="Amit Patel, General Medicine">Dr. Amit Patel (General Medicine)</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="specialization">Specialization</label>
-                        <input type="text" id="specialization" name="specialization" placeholder="e.g., Cardiology, General Medicine">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Preferred Date *</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Preferred Time *</label>
+                            <input type="time" id="time" required>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="yearOfRegistration">Year of Registration</label>
-                        <input type="number" id="yearOfRegistration" name="yearOfRegistration" min="1950" max="2024" placeholder="e.g., 2015">
+                        <label for="reason">Reason for Visit (Briefly)</label>
+                        <textarea id="reason" rows="3" placeholder="e.g., Routine checkup, specific symptoms..."></textarea>
+                    </div>
+                    <button type="submit" class="verify-btn">
+                        ✅ Confirm Appointment
+                    </button>
+                </form>
+                <div class="result-section" id="bookingResult" style="display: none;"></div>
+            </div>
+        </section>
+        <!-- Chatbot Section -->
+        <section id="chatbot" class="form-container" style="max-width:600px;">
+            <div class="header chatbot-header">
+                <h1>🤖 Health Assistant Bot</h1>
+                <p>Get instant preliminary information. Consult a doctor for diagnosis.</p>
+            </div>
+            <div class="form-section">
+                <div id="chatbot-interface">
+                    <div class="chat-window" id="chatWindow">
+                        <div class="message bot-message">Hello! I'm your <strong>AI Health Assistant</strong>. How can I help you today?</div>
+                    </div>
+                    <form id="chatForm">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <input type="text" id="chatInput" required placeholder="Type your health question...">
+                        </div>
+                        <button type="submit" class="verify-btn" style="width:auto;">Send</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <!-- Verification Section -->
+        <section id="verification" class="form-container">
+            <div class="header verification-header">
+                <h1>🏥 Doctor Verification System</h1>
+                <p>Verify the authenticity of medical practitioners instantly</p>
+            </div>
+            <div class="form-section">
+                <form id="verificationForm">
+                    <div class="form-group">
+                        <label for="doctorName">Doctor's Full Name *</label>
+                        <input type="text" id="doctorName" name="doctorName" required placeholder="Enter doctor's full name">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="registrationNumber">Registration Number *</label>
+                            <input type="text" id="registrationNumber" name="registrationNumber" required placeholder="e.g., MH12345">
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State *</label>
+                            <select id="state" name="state" required>
+                                <option value="">Select State</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="West Bengal">West Bengal</option>
+                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Punjab">Punjab</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="specialization">Specialization</label>
+                            <input type="text" id="specialization" name="specialization" placeholder="e.g., Cardiology, General Medicine">
+                        </div>
+                        <div class="form-group">
+                            <label for="yearOfRegistration">Year of Registration</label>
+                            <input type="number" id="yearOfRegistration" name="yearOfRegistration" min="1950" max="2025" placeholder="e.g., 2015">
+                        </div>
+                    </div>
+                    <button type="submit" class="verify-btn" id="verifyBtn">
+                        🔍 Verify Doctor
+                    </button>
+                </form>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Verifying doctor credentials...</p>
+                </div>
+                <div class="result-section" id="resultSection">
+                    <span class="result-icon" id="resultIcon"></span>
+                    <div id="resultMessage"></div>
+                    <div id="doctorDetails" style="margin-top: 15px; font-size: 0.95rem; opacity: 0.8;"></div>
+                </div>
+            </div>
+        </section>
+        <!-- Report Section -->
+        <section id="report" class="form-container">
+            <div class="header report-header">
+                <h1>🚨 Report a Fake Doctor</h1>
+                <p>Help us maintain the integrity of the healthcare system.</p>
+            </div>
+            <div class="form-section">
+                <form id="reportForm">
+                    <p style="margin-bottom: 20px; color: #e74c3c; font-weight: 600;">
+                        <strong>Warning:</strong> False reporting is taken seriously. Please provide accurate information.
+                    </p>
+                    <div class="form-group">
+                        <label for="fakeDoctorName">Reported Doctor's Name *</label>
+                        <input type="text" id="fakeDoctorName" required placeholder="Full Name as used by the individual">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fakeRegistrationNumber">Claimed Registration Number</label>
+                            <input type="text" id="fakeRegistrationNumber" placeholder="If known (e.g., MH12345)">
+                        </div>
+                        <div class="form-group">
+                            <label for="location">City/Location of Practice *</label>
+                            <input type="text" id="location" required placeholder="e.g., Mumbai, New Delhi">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="evidence">Details of Suspicion/Evidence *</label>
+                        <textarea id="evidence" rows="5" required placeholder="Describe the reason for your report, e.g., lack of credentials, suspicious practice, etc."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="reporterContact">Your Contact Email (Confidential)</label>
+                        <input type="email" id="reporterContact" placeholder="For follow-up if investigation is required">
+                    </div>
+                    <button type="submit" class="verify-btn submit-report-btn">
+                        Submit Report
+                    </button>
+                </form>
+                <div class="result-section" id="reportResult" style="display: none;"></div>
+            </div>
+        </section>
+        <!-- Contact Section -->
+        <section id="contact" class="form-container">
+            <div class="header contact-header">
+                <h1>📧 Get in Touch</h1>
+                <p>We're here to answer your questions about verification and support.</p>
+            </div>
+            <div class="form-section">
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Your Full Name *</label>
+                            <input type="text" id="name" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Email Address *</label>
+                            <input type="email" id="contactEmail" required placeholder="name@example.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <input type="text" id="subject" required placeholder="e.g., Verification Inquiry, Technical Support">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Your Message *</label>
+                        <textarea id="message" rows="6" required placeholder="Type your detailed message here..."></textarea>
+                    </div>
+                    <button type="submit" class="verify-btn send-btn">
+                        🚀 Send Message
+                    </button>
+                </form>
+                <div class="result-section" id="contactResult" style="display: none;"></div>
+            </div>
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <div class="contact-detail"><span>📧</span> healthverify@example.com</div>
+                <div class="contact-detail"><span>📞</span> +91 98765 43210</div>
+                <div class="contact-detail"><span>🏢</span> Mumbai, India</div>
+            </div>
+        </section>
+        <!-- FAQs Section -->
+        <section id="faqs" class="form-container">
+            <div class="header faqs-header">
+                <h1>❓ Frequently Asked Questions (FAQs)</h1>
+                <p>Find quick answers about our verification process and services.</p>
+            </div>
+            <div class="faqs-container">
+                <div class="accordion-item">
+                    <div class="accordion-question">
+                        How does the Doctor Verification System work?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-answer">
+                        <p>Our system cross-references the doctor's name, registration number, and state with official public databases (simulated here). A match confirms the practitioner is registered and in good standing.</p>
                     </div>
                 </div>
-
-                <button type="submit" class="verify-btn" id="verifyBtn">
-                    🔍 Verify Doctor
-                </button>
-            </form>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Verifying doctor credentials...</p>
+                <div class="accordion-item">
+                    <div class="accordion-question">
+                        Is the appointment booking service secure?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-answer">
+                        <p>Yes, all appointment data is encrypted and securely transmitted. We only facilitate booking with practitioners whose credentials we have verified.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-question">
+                        What should I do if a doctor is "Not Verified"?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-answer">
+                        <p>If a doctor appears "Not Verified," it means we couldn't find a direct match. You should verify their credentials with the local State Medical Council or report them via our "Report Fake Doctor" section if you suspect fraud.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-question">
+                        Can the AI Chatbot diagnose my condition?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-answer">
+                        <p>No. The AI Chatbot is for <strong>informational purposes only</strong>. It can provide general health information and preliminary guidance, but it is not a substitute for a professional medical diagnosis or emergency care.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-question">
+                        Is my personal information kept confidential?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-answer">
+                        <p>Absolutely. We adhere strictly to our Privacy Policy. All information, especially contact details submitted for reporting or appointments, is handled with the utmost confidentiality.</p>
+                    </div>
+                </div>
             </div>
-
-            <div class="result-section" id="resultSection">
-                <span class="result-icon" id="resultIcon"></span>
-                <div id="resultMessage"></div>
-                <div id="doctorDetails" style="margin-top: 15px; font-size: 0.95rem; opacity: 0.8;"></div>
+        </section>
+        <!-- Privacy Section -->
+        <section id="privacy" class="form-container">
+            <div class="header policy-header">
+                <h1>🔒 Privacy Policy</h1>
+                <p>Last Updated: September 25, 2025</p>
+            </div>
+            <div class="policy-content">
+                <p>Welcome to HealthVerify Platform. We respect your privacy and are committed to protecting your personal data. This policy will inform you as to how we look after your personal data when you visit our website.</p>
+                <h2>1. Data We Collect</h2>
+                <ul>
+                    <li><strong>Identity Data:</strong> Includes first name, last name, and doctor registration number (for verification).</li>
+                    <li><strong>Contact Data:</strong> Includes email address and telephone numbers (for appointments/support).</li>
+                    <li><strong>Technical Data:</strong> Includes internet protocol (IP) address, browser type, and time zone setting.</li>
+                    <li><strong>Usage Data:</strong> Includes information about how you use our website, products, and services.</li>
+                </ul>
+                <h2>2. How We Use Your Data</h2>
+                <ul>
+                    <li>To verify the authenticity of a medical practitioner against a mock database (in this demonstration).</li>
+                    <li>To process and manage your appointment requests.</li>
+                    <li>To respond to your support and contact inquiries.</li>
+                    <li>To improve our website and services through technical monitoring.</li>
+                </ul>
+                <h2>3. Data Security</h2>
+                <p>We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorized way, altered or disclosed. Access to your personal data is limited to those employees, agents, contractors, and other third parties who have a business need to know.</p>
+                <h2>4. Data Retention</h2>
+                <p>We will only retain your personal data for as long as necessary to fulfill the purposes we collected it for, including for the purposes of satisfying any legal, accounting, or reporting requirements.</p>
+                <h2>5. Your Legal Rights</h2>
+                <p>Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to request access, correction, or erasure of your personal data.</p>
+                <p>For any privacy-related questions or concerns, please contact us using the details on our Contact Us section.</p>
+            </div>
+        </section>
+        <!-- Terms Section -->
+        <section id="terms" class="form-container">
+            <div class="header policy-header">
+                <h1>⚖️ Terms and Conditions</h1>
+                <p>Agreement governing use of the HealthVerify Platform services.</p>
+            </div>
+            <div class="policy-content">
+                <p>Welcome to HealthVerify Platform. By accessing or using our service, you agree to be bound by these Terms and Conditions. If you disagree with any part of the terms, then you may not access the service.</p>
+                <h2>1. Service Overview and Limitations</h2>
+                <ul>
+                    <li><strong>No Medical Advice:</strong> We do not provide medical advice, diagnosis, or treatment. The AI Chatbot is for informational use only.</li>
+                    <li><strong>Verification Accuracy:</strong> While we strive for accuracy, we rely on third-party public data sources. We do not guarantee the absolute authenticity of any practitioner listed or verified.</li>
+                </ul>
+                <h2>2. User Obligations</h2>
+                <ul>
+                    <li>You must provide accurate and complete information when booking appointments or submitting reports.</li>
+                    <li>You must not submit fraudulent or malicious reports against any individual.</li>
+                </ul>
+                <h2>3. Intellectual Property</h2>
+                <p>The content, features, and functionality of the HealthVerify Platform (including the design, graphics, and code) are and will remain the exclusive property of HealthVerify Platform and its licensors. Our trademarks may not be used in connection with any product or service without the prior written consent of HealthVerify Platform.</p>
+                <h2>4. Termination</h2>
+                <p>We may terminate or suspend your access immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+                <h2>5. Limitation of Liability</h2>
+                <ul>
+                    <li>Your access to or use of or inability to access or use the Service.</li>
+                    <li>Any conduct or content of any third party on the Service.</li>
+                    <li>Unauthorized access, use, or alteration of your transmissions or content.</li>
+                </ul>
+                <h2>6. Governing Law</h2>
+                <p>These Terms shall be governed and construed in accordance with the laws applicable in our jurisdiction, without regard to its conflict of law provisions.</p>
+            </div>
+        </section>
+    </main>
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 HealthVerify Platform. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a> | 
+                <a href="#terms">Terms & Conditions</a> |
+                <a href="#faqs">FAQs</a>
             </div>
         </div>
-
-        <div class="info-section">
-            <h2 style="text-align: center; color: #2c3e50; margin-bottom: 10px;">How It Works</h2>
-            <p style="text-align: center; color: #7f8c8d; margin-bottom: 20px;">Our system cross-references doctor information with official medical council databases</p>
-            
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3>📝 Enter Details</h3>
-                    <p>Provide doctor's name, registration number, and state information</p>
-                </div>
-                <div class="info-card">
-                    <h3>🔍 Instant Verification</h3>
-                    <p>System checks against verified medical council records</p>
-                </div>
-                <div class="info-card">
-                    <h3>✅ Get Results</h3>
-                    <p>Receive immediate confirmation of doctor's authenticity</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="js/script.js"></script>
+    </footer>
+    <script>
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const resultDiv = document.getElementById('bookingResult');
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result-section result-verified';
+        resultDiv.innerHTML = '✅ <strong>Appointment Confirmed!</strong> You will receive a confirmation email shortly.';
+        this.reset();
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatWindow = document.getElementById('chatWindow');
+    function botReply(userMsg) {
+        const msg = userMsg.toLowerCase();
+        if (msg.includes('fever')) return "A fever can be caused by many conditions, including infections. Please stay hydrated and consult a doctor if it persists.";
+        if (msg.includes('headache')) return "Headaches are common and may be due to stress, dehydration, or illness. If severe or persistent, seek medical care.";
+        if (msg.includes('appointment')) return "You can book an appointment with a verified doctor using our Appointment section!";
+        if (msg.includes('covid')) return "If you suspect COVID-19, isolate and contact your local health authority for testing and guidance.";
+        if (msg.includes('emergency')) return "If you have a medical emergency, call your local emergency number immediately!";
+        return "I'm here to provide general health information. For diagnosis or treatment, please consult a medical professional.";
+    }
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const userMsg = chatInput.value.trim();
+        if (!userMsg) return;
+        const userDiv = document.createElement('div');
+        userDiv.className = 'message user-message';
+        userDiv.textContent = userMsg;
+        chatWindow.appendChild(userDiv);
+        setTimeout(() => {
+            const botDiv = document.createElement('div');
+            botDiv.className = 'message bot-message';
+            botDiv.textContent = botReply(userMsg);
+            chatWindow.appendChild(botDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }, 600);
+        chatInput.value = '';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    });
+    const mockDoctorDatabase = [
+        { name: "Dr. Rajesh Kumar", registrationNumber: "MH12345", state: "Maharashtra", specialization: "Cardiology", yearOfRegistration: 2015, status: "Active" },
+        { name: "Dr. Priya Sharma", registrationNumber: "DL67890", state: "Delhi", specialization: "Pediatrics", yearOfRegistration: 2018, status: "Active" },
+        { name: "Dr. Amit Patel", registrationNumber: "GJ11111", state: "Gujarat", specialization: "General Medicine", yearOfRegistration: 2012, status: "Active" }
+    ];
+    document.getElementById('verificationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const doctorData = {
+            name: formData.get('doctorName').trim(),
+            registrationNumber: formData.get('registrationNumber').trim().toUpperCase(),
+            state: formData.get('state'),
+            specialization: formData.get('specialization').trim(),
+            yearOfRegistration: formData.get('yearOfRegistration')
+        };
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('resultSection').style.display = 'none';
+        document.getElementById('verifyBtn').disabled = true;
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        const isVerified = mockDoctorDatabase.find(doctor =>
+            doctor.name.toLowerCase().includes(doctorData.name.toLowerCase()) &&
+            doctor.registrationNumber === doctorData.registrationNumber &&
+            doctor.state === doctorData.state
+        );
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('verifyBtn').disabled = false;
+        const resultSection = document.getElementById('resultSection');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultMessage = document.getElementById('resultMessage');
+        const doctorDetails = document.getElementById('doctorDetails');
+        resultSection.style.display = 'block';
+        if (isVerified) {
+            resultSection.className = 'result-section result-verified';
+            resultIcon.textContent = '✅';
+            resultMessage.innerHTML = `<strong>VERIFIED DOCTOR</strong><br>This doctor is registered and authentic`;
+            doctorDetails.innerHTML = `<strong>Verified Details:</strong><br>Name: ${isVerified.name}<br>Registration: ${isVerified.registrationNumber}<br>State: ${isVerified.state}<br>Specialization: ${isVerified.specialization}<br>Registered Since: ${isVerified.yearOfRegistration}<br>Status: ${isVerified.status}`;
+        } else {
+            resultSection.className = 'result-section result-fake';
+            resultIcon.textContent = '❌';
+            resultMessage.innerHTML = `<strong>NOT VERIFIED / FAKE DOCTOR</strong><br>No matching record found in our database`;
+            doctorDetails.innerHTML = `<strong>Searched For:</strong><br>Name: ${doctorData.name}<br>Registration: ${doctorData.registrationNumber}<br>State: ${doctorData.state}<br><br><em>⚠️ Please verify with local medical council or report if suspicious</em>`;
+        }
+        resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    document.getElementById('reportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const resultDiv = document.getElementById('reportResult');
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result-section report-submitted';
+        resultDiv.innerHTML = '🚨 <strong>Report Submitted!</strong> Thank you for helping us maintain healthcare standards. We will investigate this claim.';
+        this.reset();
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const resultDiv = document.getElementById('contactResult');
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result-section result-verified';
+        resultDiv.innerHTML = '🚀 <strong>Message Sent!</strong> We will get back to you soon at your provided email address.';
+        this.reset();
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    document.querySelectorAll('.accordion-question').forEach(button => {
+        button.addEventListener('click', () => {
+            const item = button.closest('.accordion-item');
+            const answer = button.nextElementSibling;
+            const isActive = item.classList.contains('active');
+            document.querySelectorAll('.accordion-item.active').forEach(activeItem => {
+                if (activeItem !== item) {
+                    activeItem.classList.remove('active');
+                    activeItem.querySelector('.accordion-answer').style.maxHeight = 0;
+                }
+            });
+            if (!isActive) {
+                item.classList.add('active');
+                answer.style.maxHeight = answer.scrollHeight + "px";
+            } else {
+                item.classList.remove('active');
+                answer.style.maxHeight = 0;
+            }
+        });
+    });
+    </script>
 </body>
 </html>
