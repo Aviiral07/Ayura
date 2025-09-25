@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Doctor Detection & Verification System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-section {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .verify-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+        }
+
+        .verify-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: none;
+        }
+
+        .result-verified {
+            background: linear-gradient(135deg, #d5f4e6 0%, #c8e6c9 100%);
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+
+        .result-fake {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .info-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Doctor Verification System</h1>
+            <p>Verify the authenticity of medical practitioners instantly</p>
+        </div>
+
+        <div class="form-section">
+            <form id="verificationForm">
+                <div class="form-group">
+                    <label for="doctorName">Doctor's Full Name *</label>
+                    <input type="text" id="doctorName" name="doctorName" required placeholder="Enter doctor's full name">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="registrationNumber">Registration Number *</label>
+                        <input type="text" id="registrationNumber" name="registrationNumber" required placeholder="e.g., MH12345">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State *</label>
+                        <select id="state" name="state" required>
+                            <option value="">Select State</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Punjab">Punjab</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="specialization">Specialization</label>
+                        <input type="text" id="specialization" name="specialization" placeholder="e.g., Cardiology, General Medicine">
+                    </div>
+                    <div class="form-group">
+                        <label for="yearOfRegistration">Year of Registration</label>
+                        <input type="number" id="yearOfRegistration" name="yearOfRegistration" min="1950" max="2024" placeholder="e.g., 2015">
+                    </div>
+                </div>
+
+                <button type="submit" class="verify-btn" id="verifyBtn">
+                    🔍 Verify Doctor
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Verifying doctor credentials...</p>
+            </div>
+
+            <div class="result-section" id="resultSection">
+                <span class="result-icon" id="resultIcon"></span>
+                <div id="resultMessage"></div>
+                <div id="doctorDetails" style="margin-top: 15px; font-size: 0.95rem; opacity: 0.8;"></div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2 style="text-align: center; color: #2c3e50; margin-bottom: 10px;">How It Works</h2>
+            <p style="text-align: center; color: #7f8c8d; margin-bottom: 20px;">Our system cross-references doctor information with official medical council databases</p>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>📝 Enter Details</h3>
+                    <p>Provide doctor's name, registration number, and state information</p>
+                </div>
+                <div class="info-card">
+                    <h3>🔍 Instant Verification</h3>
+                    <p>System checks against verified medical council records</p>
+                </div>
+                <div class="info-card">
+                    <h3>✅ Get Results</h3>
+                    <p>Receive immediate confirmation of doctor's authenticity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock database for demonstration (in real app, this would be server-side)
+        const mockDoctorDatabase = [
+            {
+                name: "Dr. Rajesh Kumar",
+                registrationNumber: "MH12345",
+                state: "Maharashtra",
+                specialization: "Cardiology",
+                yearOfRegistration: 2015,
+                status: "Active"
+            },
+            {
+                name: "Dr. Priya Sharma",
+                registrationNumber: "DL67890",
+                state: "Delhi",
+                specialization: "Pediatrics",
+                yearOfRegistration: 2018,
+                status: "Active"
+            },
+            {
+                name: "Dr. Amit Patel",
+                registrationNumber: "GJ11111",
+                state: "Gujarat",
+                specialization: "General Medicine",
+                yearOfRegistration: 2012,
+                status: "Active"
+            },
+            {
+                name: "Dr. Sunita Reddy",
+                registrationNumber: "KA22222",
+                state: "Karnataka",
+                specialization: "Dermatology",
+                yearOfRegistration: 2020,
+                status: "Active"
+            },
+            {
+                name: "Dr. Vikram Singh",
+                registrationNumber: "RJ33333",
+                state: "Rajasthan",
+                specialization: "Orthopedics",
+                yearOfRegistration: 2016,
+                status: "Active"
+            }
+        ];
+
+        document.getElementById('verificationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const doctorData = {
+                name: formData.get('doctorName').trim(),
+                registrationNumber: formData.get('registrationNumber').trim().toUpperCase(),
+                state: formData.get('state'),
+                specialization: formData.get('specialization').trim(),
+                yearOfRegistration: formData.get('yearOfRegistration')
+            };
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('verifyBtn').disabled = true;
+
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Verify against mock database
+            const foundDoctor = verifyDoctor(doctorData);
+            
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('verifyBtn').disabled = false;
+
+            // Show results
+            displayResult(foundDoctor, doctorData);
+        });
+
+        function verifyDoctor(inputData) {
+            // Check if doctor exists in database
+            const foundDoctor = mockDoctorDatabase.find(doctor => 
+                doctor.name.toLowerCase().includes(inputData.name.toLowerCase()) &&
+                doctor.registrationNumber === inputData.registrationNumber &&
+                doctor.state === inputData.state
+            );
+
+            return foundDoctor || null;
+        }
+
+        function displayResult(verifiedDoctor, inputData) {
+            const resultSection = document.getElementById('resultSection');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultMessage = document.getElementById('resultMessage');
+            const doctorDetails = document.getElementById('doctorDetails');
+
+            resultSection.style.display = 'block';
+
+            if (verifiedDoctor) {
+                resultSection.className = 'result-section result-verified';
+                resultIcon.textContent = '✅';
+                resultMessage.innerHTML = `
+                    <strong>VERIFIED DOCTOR</strong><br>
+                    This doctor is registered and authentic
+                `;
+                doctorDetails.innerHTML = `
+                    <strong>Verified Details:</strong><br>
+                    Name: ${verifiedDoctor.name}<br>
+                    Registration: ${verifiedDoctor.registrationNumber}<br>
+                    State: ${verifiedDoctor.state}<br>
+                    Specialization: ${verifiedDoctor.specialization}<br>
+                    Registered Since: ${verifiedDoctor.yearOfRegistration}<br>
+                    Status: ${verifiedDoctor.status}
+                `;
+            } else {
+                resultSection.className = 'result-section result-fake';
+                resultIcon.textContent = '❌';
+                resultMessage.innerHTML = `
+                    <strong>NOT VERIFIED / FAKE DOCTOR</strong><br>
+                    No matching record found in our database
+                `;
+                doctorDetails.innerHTML = `
+                    <strong>Searched For:</strong><br>
+                    Name: ${inputData.name}<br>
+                    Registration: ${inputData.registrationNumber}<br>
+                    State: ${inputData.state}<br>
+                    <br>
+                    <em>⚠️ Please verify with local medical council or report if suspicious</em>
+                `;
+            }
+
+            // Scroll to result
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Add some interactive feedback
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
