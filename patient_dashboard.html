@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard | AYURA Services</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    <header class="main-header">
+        <div class="container header-content">
+            <h1 class="logo">AYURA Patient Hub</h1>
+            <nav>
+                <ul>
+                    <li><a href="patient_dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="verification.html">Verification</a></li>
+                    <li><a href="appointment.html">Appointments</a></li>
+                    <li><a href="chatbot.html">AI Chatbot</a></li>
+                    <li><a href="login.html">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-main">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Welcome Back, Patient!</h2>
+                <p>Your centralized access point for trusted healthcare and original AYURA services.</p>
+            </div>
+
+            <div class="dashboard-grid">
+                
+                <a href="verification.html" class="dashboard-card">
+                    <div class="dashboard-icon" style="color: #3498db;">🏥</div>
+                    <h3>Verify a Doctor</h3>
+                    <p>Confirm the credentials of any practitioner instantly for your peace of mind.</p>
+                </a>
+                
+                <a href="appointment.html" class="dashboard-card">
+                    <div class="dashboard-icon" style="color: #e67e22;">📅</div>
+                    <h3>Book an Appointment</h3>
+                    <p>Schedule your next consultation with verified health providers.</p>
+                </a>
+
+                <a href="chatbot.html" class="dashboard-card">
+                    <div class="dashboard-icon" style="color: #9b59b6;">🤖</div>
+                    <h3>AI Health Chatbot</h3>
+                    <p>Get preliminary information and answers to general health queries.</p>
+                </a>
+
+                <a href="emr_view.html" class="dashboard-card" style="background: #f1c40f; color: #2c3e50; box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);">
+                    <div class="dashboard-icon" style="color: #2c3e50;">🔒</div>
+                    <h3>My EMR (View/Consent)</h3>
+                    <p>See when consent is granted for your records. (Doctor use only).</p>
+                </a>
+            </div>
+            
+            <div style="text-align: center; padding: 40px; border-top: 1px solid #eee; margin-top: 30px;">
+                <h3>Need Technical Info? (For Judges)</h3>
+                <p>Access the core microservice documentation and demo links:</p>
+                <p>
+                    <a href="demo.html" class="hero-btn verify-btn" style="margin: 5px;">API Demo</a>
+                    <a href="tech_docs.html" class="hero-btn learn-btn" style="margin: 5px;">Technical Docs</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 AYURA. A Dual-Role Platform.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a> | 
+                <a href="terms.html">Terms & Conditions</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
