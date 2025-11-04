@@ -1,0 +1,1 @@
+{\n  "name": "ayura-ui",\n  "version": "1.0.0",\n  "private": true,\n  "dependencies": {\n    "react": "^18.2.0",\n    "react-dom": "^18.2.0",\n    "styled-components": "^6.0.0"\n  },\n  "devDependencies": {\n    "typescript": "^5.2.0"\n  },\n  "scripts": {\n    "start": "webpack serve --mode development --open",\n    "build": "webpack --mode production"\n  }\n}

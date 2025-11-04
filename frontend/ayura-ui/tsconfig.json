@@ -1,0 +1,1 @@
+{\n  "compilerOptions": {\n    "target": "ESNext",\n    "lib": ["dom", "dom.iterable", "ESNext"],\n    "module": "ESNext",\n    "jsx": "react-jsx",\n    "strict": true,\n    "moduleResolution": "node",\n    "esModuleInterop": true,\n    "skipLibCheck": true,\n    "forceConsistentCasingInFileNames": true,\n    "outDir": "./dist"\n  },\n  "include": ["./*.tsx", "./*.ts"]\n}
