@@ -1,86 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | AYURA</title>
-    <link rel="stylesheet" href="style.css"> 
-</head>
-<body class="login-body">
-    
-    <div class="login-container">
-        <h1>AYURA Login</h1>
-        <p>Login to access your appropriate dashboard.</p>
-        
-        <div class="role-select" id="roleSelect">
-            <button id="doctorBtn" class="active" data-role="doctor">🩺 Doctor</button>
-            <button id="patientBtn" data-role="patient">👨‍⚕ Patient</button>
-        </div>
+name: Deploy static content to Pages
 
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username" style="text-align: left;">Username / ID</label>
-                <input type="text" id="username" placeholder="Enter your ID or ABHA ID" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password" style="text-align: left;">Password</label>
-                <input type="password" id="password" placeholder="" required>
-            </div>
-            
-            <button type="submit" class="verify-btn login-btn">
-                Secure Login
-            </button>
-        </form>
-    </div>
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
 
-    <script>
-       let currentRole = 'doctor';
-const loginForm = document.getElementById('loginForm');
-const doctorBtn = document.getElementById('doctorBtn');
-const patientBtn = document.getElementById('patientBtn');
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
-doctorBtn.addEventListener('click', () => {
-    currentRole = 'doctor';
-    doctorBtn.classList.add('active');
-    patientBtn.classList.remove('active');
-    document.getElementById('username').placeholder = 'Enter Doctor ID';
-});
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
-patientBtn.addEventListener('click', () => {
-    currentRole = 'patient';
-    patientBtn.classList.add('active');
-    doctorBtn.classList.remove('active');
-    document.getElementById('username').placeholder = 'Enter ABHA ID';
-});
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-    fetch('http://localhost:3000/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, role: currentRole })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            if (data.role === 'doctor') {
-                window.location.href = 'emr_view.html';
-            } else {
-                window.location.href = 'patient_dashboard.html';
-            }
-        } else {
-            alert('Login failed: ' + data.message);
-        }
-    })
-    .catch(() => {
-        alert('Error: Could not connect to server. Please make sure node server.js is running.');
-    });
-});
-    </script>
-</body>
-</html>
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
