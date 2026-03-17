@@ -1,574 +1,819 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ayura</title>
-    <link rel="stylesheet" href="/style.css">
-    <style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ayura — Your Trusted Healthcare Companion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #0a9e8a;
+      --teal-light: #12c4ab;
+      --teal-dark: #077a6b;
+      --navy: #0b1e34;
+      --navy-mid: #112844;
+      --cream: #f5f0e8;
+      --cream-dark: #ede7da;
+      --white: #ffffff;
+      --text-muted: #6b7e91;
+      --accent: #e8633a;
+    }
+
     html { scroll-behavior: smooth; }
-    section { margin-bottom: 50px; }
-    .nav-section { padding: 14px 0; background: #2c3e50; }
-    .nav-section ul { display: flex; justify-content: center; gap: 18px; list-style: none; margin:0;}
-    .nav-section a { color: white; font-weight: bold; text-decoration: none; padding: 8px 16px; border-radius: 6px; }
-    .nav-section a:hover, .nav-section a.active { background: #3498db; }
-    #chatbot-interface { display: flex; flex-direction: column; gap: 15px; }
-    .chat-window { height: 350px; border: 1px solid #e1e8ed; border-radius: 10px; padding: 15px; overflow-y: auto; background: #ffffff; display: flex; flex-direction: column; gap: 10px;}
-    .message { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4;}
-    .bot-message { background: #e1f5fe; color: #3498db; align-self: flex-start; border-bottom-left-radius: 5px;}
-    .user-message { background: #d5f4e6; color: #27ae60; align-self: flex-end; border-bottom-right-radius: 5px;}
-    .accordion-item { border: 1px solid #e1e8ed; margin-bottom: 10px; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
-    .accordion-question { background: #f8f9fa; padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #2c3e50; cursor: pointer; transition: background 0.2s; font-size: 1.05rem;}
-    .accordion-question:hover {background: #eff2f4;}
-    .accordion-icon { font-size: 1.2rem; color: #3498db; transition: transform 0.3s ease;}
-    .accordion-answer { padding: 0 25px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; background: white; color: #555;}
-    .accordion-answer p { padding: 15px 0; border-top: 1px solid #ecf0f1; margin: 0;}
-    .accordion-item.active .accordion-question { background: #ecf0f1; color: #3498db;}
-    .accordion-item.active .accordion-icon { transform: rotate(45deg);}
-    .report-header { background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important;}
-    .submit-report-btn { background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);}
-    .submit-report-btn:hover { box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3); transform: translateY(-2px);}
-    .result-section.report-submitted { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); color: #e74c3c; border: 2px solid #e74c3c;}
-    .contact-header { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;}
-    .send-btn { background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);}
-    .send-btn:hover { box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3);}
-    .policy-header { background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%) !important;}
-    .faqs-header { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;}
-    .faqs-container { padding: 40px 30px; background: white;}
-    .contact-info { background: #f8f9fa; padding: 30px; border-radius: 10px; margin-top: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
-    .contact-info h3 { color: #2c3e50; margin-bottom: 15px; text-align: center;}
-    .contact-detail { display: flex; align-items: center; margin-bottom: 15px; font-size: 1.05rem; color: #555;}
-    .contact-detail span { color: #3498db; font-size: 1.5rem; margin-right: 15px;}
-    </style>
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.2rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.3s, backdrop-filter 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(11,30,52,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      color: var(--white);
+      letter-spacing: -0.03em;
+    }
+    .nav-logo span { color: var(--teal-light); }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--teal);
+      color: var(--white) !important;
+      padding: 0.55rem 1.4rem !important;
+      border-radius: 50px !important;
+      font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--teal-light) !important; transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+
+    /* radial glow */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 10%; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(10,158,138,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(10,158,138,0.12);
+      border: 1px solid rgba(10,158,138,0.35);
+      color: var(--teal-light);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.4rem 1.1rem;
+      border-radius: 50px;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-badge::before { content: '●'; font-size: 0.5rem; animation: pulse 2s ease infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--teal-light);
+      position: relative;
+    }
+    .hero h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: 4px; left: 0; right: 0;
+      height: 3px;
+      background: var(--teal);
+      border-radius: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: underline 0.5s 0.9s ease forwards;
+    }
+    @keyframes underline { to { transform: scaleX(1); } }
+
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: rgba(255,255,255,0.6);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--teal);
+      color: var(--white);
+      padding: 0.85rem 2.2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 0 0 rgba(10,158,138,0.4);
+    }
+    .btn-primary:hover {
+      background: var(--teal-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(10,158,138,0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      padding: 0.85rem 2.2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn-outline:hover {
+      border-color: rgba(255,255,255,0.5);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    /* stats strip */
+    .stats-strip {
+      display: flex;
+      gap: 3rem;
+      margin-top: 4rem;
+      padding-top: 3rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      animation: fadeUp 0.7s 0.4s ease both;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--teal-light);
+      letter-spacing: -0.03em;
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 0.2rem;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 6rem 4rem;
+      position: relative;
+    }
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal-light);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto 4rem;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: transform 0.3s, background 0.3s, border-color 0.3s;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(10,158,138,0.3);
+    }
+    .feature-card:hover::before { transform: scaleX(1); }
+
+    .feature-icon {
+      width: 52px; height: 52px;
+      background: rgba(10,158,138,0.15);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
+    }
+    .feature-card p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how {
+      padding: 6rem 4rem;
+      background: rgba(255,255,255,0.02);
+    }
+    .steps {
+      display: flex;
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      flex-wrap: wrap;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 28px; left: calc(16.6% + 1rem);
+      right: calc(16.6% + 1rem);
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal), rgba(10,158,138,0.2));
+    }
+    .step {
+      flex: 1;
+      min-width: 160px;
+      text-align: center;
+      padding: 0 1rem;
+      position: relative;
+    }
+    .step-num {
+      width: 56px; height: 56px;
+      background: var(--teal-dark);
+      border: 2px solid var(--teal);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin: 0 auto 1.2rem;
+      color: var(--teal-light);
+      position: relative;
+      z-index: 1;
+      background: var(--navy);
+    }
+    .step h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .step p {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ── TRUST SECTION ── */
+    .trust {
+      padding: 6rem 4rem;
+      display: flex;
+      align-items: center;
+      gap: 5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+    .trust-content { flex: 1; min-width: 280px; }
+    .trust-content h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.2rem;
+      line-height: 1.15;
+    }
+    .trust-content p {
+      color: rgba(255,255,255,0.55);
+      line-height: 1.75;
+      font-size: 0.95rem;
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+    .trust-checks {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .trust-checks li {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.75);
+    }
+    .trust-checks li::before {
+      content: '✓';
+      width: 22px; height: 22px;
+      background: rgba(10,158,138,0.15);
+      border: 1px solid var(--teal);
+      color: var(--teal-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .trust-visual {
+      flex: 1;
+      min-width: 280px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 2.5rem;
+    }
+    .verified-card {
+      background: rgba(10,158,138,0.1);
+      border: 1px solid rgba(10,158,138,0.25);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .verified-card-top {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .verified-avatar {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .verified-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; }
+    .verified-spec { font-size: 0.78rem; color: rgba(255,255,255,0.45); margin-top: 0.1rem; }
+    .verified-badge {
+      margin-left: auto;
+      background: rgba(10,158,138,0.2);
+      color: var(--teal-light);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.7rem;
+      border-radius: 50px;
+      border: 1px solid rgba(10,158,138,0.4);
+    }
+    .verified-meta {
+      display: flex;
+      gap: 1rem;
+    }
+    .verified-meta span {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+    }
+    .verified-meta strong { color: rgba(255,255,255,0.75); }
+
+    .mini-stat-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0;
+    }
+    .mini-stat {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .mini-stat-val {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--teal-light);
+    }
+    .mini-stat-lab {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.2rem;
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      padding: 5rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(10,158,138,0.12) 0%, transparent 70%);
+    }
+    .cta-box {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-box h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+    .cta-box p {
+      color: rgba(255,255,255,0.55);
+      font-size: 1rem;
+      font-weight: 300;
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2.5rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.8);
+    }
+    .footer-logo span { color: var(--teal-light); }
+    .footer-copy {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.3);
+    }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--teal-light); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .features, .how, .cta-section { padding: 4rem 1.5rem; }
+      .trust { padding: 4rem 1.5rem; gap: 2.5rem; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+      .steps::before { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <header class="main-header">
-        <div class="container header-content">
-            <h1 class="logo">Ayura</h1>
-        </div>
-    </header>
-    <nav class="nav-section">
-        <ul>
-            <li><a href="#home" class="active">Home</a></li>
-            <li><a href="#appointment">Appointment</a></li>
-            <li><a href="#chatbot">AI Chatbot</a></li>
-            <li><a href="#verification">Verify Doctor</a></li>
-            <li><a href="#report">Report</a></li>
-            <li><a href="#contact">Contact Us</a></li>
-            <li><a href="#faqs">FAQs</a></li>
-            <li><a href="#privacy">Privacy</a></li>
-            <li><a href="#terms">Terms</a></li>
+
+  <!-- NAV -->
+  <nav id="mainNav">
+    <div class="nav-logo">Ayu<span>ra</span></div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#trust">Why Us</a></li>
+      <li><a href="login.html" class="nav-cta">Login →</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-badge">India's Healthcare Verification Platform</div>
+    <h1>Healthcare you can<br><em>actually trust</em></h1>
+    <p>Verify doctor credentials, book appointments with confidence, and protect yourself from medical fraud — all in one place.</p>
+    <div class="hero-buttons">
+      <a href="login.html" class="btn-primary">Get Started Free →</a>
+      <a href="#features" class="btn-outline">See How It Works</a>
+    </div>
+    <div class="stats-strip">
+      <div class="stat">
+        <div class="stat-num">50K+</div>
+        <div class="stat-label">Doctors Verified</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Accuracy Rate</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1.2L+</div>
+        <div class="stat-label">Patients Served</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">28</div>
+        <div class="stat-label">States Covered</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-label">What We Offer</div>
+    <h2 class="section-title">Everything you need for<br>safe healthcare</h2>
+    <p class="section-sub">A complete platform that puts patient safety and trust at the center of every interaction.</p>
+
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">🏥</div>
+        <h3>Doctor Verification</h3>
+        <p>Instantly cross-reference any doctor's credentials with official State Medical Council databases. Know before you go.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📅</div>
+        <h3>Appointment Booking</h3>
+        <p>Schedule consultations only with verified practitioners. No fakes, no risk — just trusted healthcare at your fingertips.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Health Assistant</h3>
+        <p>Get preliminary health guidance 24/7 from our intelligent chatbot. Always available, always informative.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🚨</div>
+        <h3>Fraud Reporting</h3>
+        <p>Report suspicious practitioners and help protect your community. Every report contributes to a safer India.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📋</div>
+        <h3>Digital Health Records</h3>
+        <p>Access and manage your Electronic Medical Records securely. Your health history, always at hand.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🔒</div>
+        <h3>Data Privacy</h3>
+        <p>Bank-grade encryption on all your data. We follow strict DPDP compliance — your health data stays yours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="section-label">The Process</div>
+    <h2 class="section-title reveal">Simple. Fast. Reliable.</h2>
+    <p class="section-sub reveal">Verify any doctor in under 30 seconds — here's how.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h4>Create Account</h4>
+        <p>Sign up as a patient or doctor in seconds.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <h4>Enter Details</h4>
+        <p>Input the doctor's name, registration number and state.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <h4>Instant Verify</h4>
+        <p>We match against official medical council records.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST SECTION -->
+  <section id="trust">
+    <div class="trust">
+      <div class="trust-content reveal">
+        <div class="section-label" style="text-align:left;">Why Ayura</div>
+        <h2>Built for a country that deserves better healthcare</h2>
+        <p>India has over 13 lakh registered doctors — but fraud is rampant. Ayura bridges the trust gap between patients and practitioners with real-time verification.</p>
+        <ul class="trust-checks">
+          <li>Real-time Medical Council database sync</li>
+          <li>Available for all 28 states and 8 UTs</li>
+          <li>ABHA ID integration for patients</li>
+          <li>Fully DPDP compliant data handling</li>
+          <li>Doctor & Patient dual-login portal</li>
         </ul>
-    </nav>
-    <main>
-        <!-- Home Section -->
-        <section id="home" class="hero-section">
-            <div class="container">
-                <h2>Your Trustworthy Health Companion</h2>
-                <p>Verify doctor credentials, book appointments, and report fraudulent activity for a safer healthcare experience.</p>
-                <div class="cta-buttons">
-                    <a href="#verification" class="btn primary-btn">Start Verification Now</a>
-                    <a href="#appointment" class="btn secondary-btn">Book an Appointment</a>
-                </div>
+      </div>
+      <div class="trust-visual reveal">
+        <div class="verified-card">
+          <div class="verified-card-top">
+            <div class="verified-avatar">👨‍⚕️</div>
+            <div>
+              <div class="verified-name">Dr. Rajesh Kumar</div>
+              <div class="verified-spec">Cardiology · Maharashtra</div>
             </div>
-            <div class="features-section">
-                <div class="container info-grid">
-                    <div class="info-card">
-                        <h3>✅ Verification System</h3>
-                        <p>Instant cross-reference with official medical council databases.</p>
-                    </div>
-                    <div class="info-card">
-                        <h3>📅 Appointment Booking</h3>
-                        <p>Schedule visits with verified practitioners easily and securely.</p>
-                    </div>
-                    <div class="info-card">
-                        <h3>🤖 AI Health Assistant</h3>
-                        <p>Get preliminary health information and guidance 24/7.</p>
-                    </div>
-                    <div class="info-card">
-                        <h3>🚨 Report Fraud</h3>
-                        <p>Contribute to a safer community by reporting fake practitioners.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Appointment Section -->
-        <section id="appointment" class="form-container">
-            <div class="header appointment-header">
-                <h1>📅 Book an Appointment</h1>
-                <p>Schedule your visit with a verified medical professional.</p>
-            </div>
-            <div class="form-section">
-                <form id="appointmentForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="patientName">Your Full Name *</label>
-                            <input type="text" id="patientName" required placeholder="Enter your full name">
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email Address *</label>
-                            <input type="email" id="email" required placeholder="name@example.com">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="doctorSelect">Select Verified Doctor *</label>
-                        <select id="doctorSelect" required>
-                            <option value="">Choose a Doctor</option>
-                            <option value="Rajesh Kumar, Cardiology">Dr. Rajesh Kumar (Cardiology)</option>
-                            <option value="Priya Sharma, Pediatrics">Dr. Priya Sharma (Pediatrics)</option>
-                            <option value="Amit Patel, General Medicine">Dr. Amit Patel (General Medicine)</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="date">Preferred Date *</label>
-                            <input type="date" id="date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="time">Preferred Time *</label>
-                            <input type="time" id="time" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="reason">Reason for Visit (Briefly)</label>
-                        <textarea id="reason" rows="3" placeholder="e.g., Routine checkup, specific symptoms..."></textarea>
-                    </div>
-                    <button type="submit" class="verify-btn">
-                        ✅ Confirm Appointment
-                    </button>
-                </form>
-                <div class="result-section" id="bookingResult" style="display: none;"></div>
-            </div>
-        </section>
-        <!-- Chatbot Section -->
-        <section id="chatbot" class="form-container" style="max-width:600px;">
-            <div class="header chatbot-header">
-                <h1>🤖 Health Assistant Bot</h1>
-                <p>Get instant preliminary information. Consult a doctor for diagnosis.</p>
-            </div>
-            <div class="form-section">
-                <div id="chatbot-interface">
-                    <div class="chat-window" id="chatWindow">
-                        <div class="message bot-message">Hello! I'm your <strong>AI Health Assistant</strong>. How can I help you today?</div>
-                    </div>
-                    <form id="chatForm">
-                        <div class="form-group" style="margin-bottom:0;">
-                            <input type="text" id="chatInput" required placeholder="Type your health question...">
-                        </div>
-                        <button type="submit" class="verify-btn" style="width:auto;">Send</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-        <!-- Verification Section -->
-        <section id="verification" class="form-container">
-            <div class="header verification-header">
-                <h1>🏥 Doctor Verification System</h1>
-                <p>Verify the authenticity of medical practitioners instantly</p>
-            </div>
-            <div class="form-section">
-                <form id="verificationForm">
-                    <div class="form-group">
-                        <label for="doctorName">Doctor's Full Name *</label>
-                        <input type="text" id="doctorName" name="doctorName" required placeholder="Enter doctor's full name">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="registrationNumber">Registration Number *</label>
-                            <input type="text" id="registrationNumber" name="registrationNumber" required placeholder="e.g., MH12345">
-                        </div>
-                        <div class="form-group">
-                            <label for="state">State *</label>
-                            <select id="state" name="state" required>
-                                <option value="">Select State</option>
-                                <option value="Maharashtra">Maharashtra</option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Karnataka">Karnataka</option>
-                                <option value="Tamil Nadu">Tamil Nadu</option>
-                                <option value="Gujarat">Gujarat</option>
-                                <option value="Rajasthan">Rajasthan</option>
-                                <option value="West Bengal">West Bengal</option>
-                                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                <option value="Punjab">Punjab</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="specialization">Specialization</label>
-                            <input type="text" id="specialization" name="specialization" placeholder="e.g., Cardiology, General Medicine">
-                        </div>
-                        <div class="form-group">
-                            <label for="yearOfRegistration">Year of Registration</label>
-                            <input type="number" id="yearOfRegistration" name="yearOfRegistration" min="1950" max="2025" placeholder="e.g., 2015">
-                        </div>
-                    </div>
-                    <button type="submit" class="verify-btn" id="verifyBtn">
-                        🔍 Verify Doctor
-                    </button>
-                </form>
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    <p>Verifying doctor credentials...</p>
-                </div>
-                <div class="result-section" id="resultSection">
-                    <span class="result-icon" id="resultIcon"></span>
-                    <div id="resultMessage"></div>
-                    <div id="doctorDetails" style="margin-top: 15px; font-size: 0.95rem; opacity: 0.8;"></div>
-                </div>
-            </div>
-        </section>
-        <!-- Report Section -->
-        <section id="report" class="form-container">
-            <div class="header report-header">
-                <h1>🚨 Report a Fake Doctor</h1>
-                <p>Help us maintain the integrity of the healthcare system.</p>
-            </div>
-            <div class="form-section">
-                <form id="reportForm">
-                    <p style="margin-bottom: 20px; color: #e74c3c; font-weight: 600;">
-                        <strong>Warning:</strong> False reporting is taken seriously. Please provide accurate information.
-                    </p>
-                    <div class="form-group">
-                        <label for="fakeDoctorName">Reported Doctor's Name *</label>
-                        <input type="text" id="fakeDoctorName" required placeholder="Full Name as used by the individual">
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fakeRegistrationNumber">Claimed Registration Number</label>
-                            <input type="text" id="fakeRegistrationNumber" placeholder="If known (e.g., MH12345)">
-                        </div>
-                        <div class="form-group">
-                            <label for="location">City/Location of Practice *</label>
-                            <input type="text" id="location" required placeholder="e.g., Mumbai, New Delhi">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="evidence">Details of Suspicion/Evidence *</label>
-                        <textarea id="evidence" rows="5" required placeholder="Describe the reason for your report, e.g., lack of credentials, suspicious practice, etc."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="reporterContact">Your Contact Email (Confidential)</label>
-                        <input type="email" id="reporterContact" placeholder="For follow-up if investigation is required">
-                    </div>
-                    <button type="submit" class="verify-btn submit-report-btn">
-                        Submit Report
-                    </button>
-                </form>
-                <div class="result-section" id="reportResult" style="display: none;"></div>
-            </div>
-        </section>
-        <!-- Contact Section -->
-        <section id="contact" class="form-container">
-            <div class="header contact-header">
-                <h1>📧 Get in Touch</h1>
-                <p>We're here to answer your questions about verification and support.</p>
-            </div>
-            <div class="form-section">
-                <form id="contactForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Your Full Name *</label>
-                            <input type="text" id="name" required placeholder="Enter your full name">
-                        </div>
-                        <div class="form-group">
-                            <label for="contactEmail">Email Address *</label>
-                            <input type="email" id="contactEmail" required placeholder="name@example.com">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject">Subject *</label>
-                        <input type="text" id="subject" required placeholder="e.g., Verification Inquiry, Technical Support">
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Your Message *</label>
-                        <textarea id="message" rows="6" required placeholder="Type your detailed message here..."></textarea>
-                    </div>
-                    <button type="submit" class="verify-btn send-btn">
-                        🚀 Send Message
-                    </button>
-                </form>
-                <div class="result-section" id="contactResult" style="display: none;"></div>
-            </div>
-            <div class="contact-info">
-                <h3>Contact Information</h3>
-                <div class="contact-detail"><span>📧</span> healthverify@example.com</div>
-                <div class="contact-detail"><span>📞</span> +91 98765 43210</div>
-                <div class="contact-detail"><span>🏢</span> Mumbai, India</div>
-            </div>
-        </section>
-        <!-- FAQs Section -->
-        <section id="faqs" class="form-container">
-            <div class="header faqs-header">
-                <h1>❓ Frequently Asked Questions (FAQs)</h1>
-                <p>Find quick answers about our verification process and services.</p>
-            </div>
-            <div class="faqs-container">
-                <div class="accordion-item">
-                    <div class="accordion-question">
-                        How does the Doctor Verification System work?
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-answer">
-                        <p>Our system cross-references the doctor's name, registration number, and state with official public databases (simulated here). A match confirms the practitioner is registered and in good standing.</p>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <div class="accordion-question">
-                        Is the appointment booking service secure?
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-answer">
-                        <p>Yes, all appointment data is encrypted and securely transmitted. We only facilitate booking with practitioners whose credentials we have verified.</p>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <div class="accordion-question">
-                        What should I do if a doctor is "Not Verified"?
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-answer">
-                        <p>If a doctor appears "Not Verified," it means we couldn't find a direct match. You should verify their credentials with the local State Medical Council or report them via our "Report Fake Doctor" section if you suspect fraud.</p>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <div class="accordion-question">
-                        Can the AI Chatbot diagnose my condition?
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-answer">
-                        <p>No. The AI Chatbot is for <strong>informational purposes only</strong>. It can provide general health information and preliminary guidance, but it is not a substitute for a professional medical diagnosis or emergency care.</p>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <div class="accordion-question">
-                        Is my personal information kept confidential?
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-answer">
-                        <p>Absolutely. We adhere strictly to our Privacy Policy. All information, especially contact details submitted for reporting or appointments, is handled with the utmost confidentiality.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Privacy Section -->
-        <section id="privacy" class="form-container">
-            <div class="header policy-header">
-                <h1>🔒 Privacy Policy</h1>
-                <p>Last Updated: September 25, 2025</p>
-            </div>
-            <div class="policy-content">
-                <p>Welcome to HealthVerify Platform. We respect your privacy and are committed to protecting your personal data. This policy will inform you as to how we look after your personal data when you visit our website.</p>
-                <h2>1. Data We Collect</h2>
-                <ul>
-                    <li><strong>Identity Data:</strong> Includes first name, last name, and doctor registration number (for verification).</li>
-                    <li><strong>Contact Data:</strong> Includes email address and telephone numbers (for appointments/support).</li>
-                    <li><strong>Technical Data:</strong> Includes internet protocol (IP) address, browser type, and time zone setting.</li>
-                    <li><strong>Usage Data:</strong> Includes information about how you use our website, products, and services.</li>
-                </ul>
-                <h2>2. How We Use Your Data</h2>
-                <ul>
-                    <li>To verify the authenticity of a medical practitioner against a mock database (in this demonstration).</li>
-                    <li>To process and manage your appointment requests.</li>
-                    <li>To respond to your support and contact inquiries.</li>
-                    <li>To improve our website and services through technical monitoring.</li>
-                </ul>
-                <h2>3. Data Security</h2>
-                <p>We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorized way, altered or disclosed. Access to your personal data is limited to those employees, agents, contractors, and other third parties who have a business need to know.</p>
-                <h2>4. Data Retention</h2>
-                <p>We will only retain your personal data for as long as necessary to fulfill the purposes we collected it for, including for the purposes of satisfying any legal, accounting, or reporting requirements.</p>
-                <h2>5. Your Legal Rights</h2>
-                <p>Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to request access, correction, or erasure of your personal data.</p>
-                <p>For any privacy-related questions or concerns, please contact us using the details on our Contact Us section.</p>
-            </div>
-        </section>
-        <!-- Terms Section -->
-        <section id="terms" class="form-container">
-            <div class="header policy-header">
-                <h1>⚖️ Terms and Conditions</h1>
-                <p>Agreement governing use of the HealthVerify Platform services.</p>
-            </div>
-            <div class="policy-content">
-                <p>Welcome to HealthVerify Platform. By accessing or using our service, you agree to be bound by these Terms and Conditions. If you disagree with any part of the terms, then you may not access the service.</p>
-                <h2>1. Service Overview and Limitations</h2>
-                <ul>
-                    <li><strong>No Medical Advice:</strong> We do not provide medical advice, diagnosis, or treatment. The AI Chatbot is for informational use only.</li>
-                    <li><strong>Verification Accuracy:</strong> While we strive for accuracy, we rely on third-party public data sources. We do not guarantee the absolute authenticity of any practitioner listed or verified.</li>
-                </ul>
-                <h2>2. User Obligations</h2>
-                <ul>
-                    <li>You must provide accurate and complete information when booking appointments or submitting reports.</li>
-                    <li>You must not submit fraudulent or malicious reports against any individual.</li>
-                </ul>
-                <h2>3. Intellectual Property</h2>
-                <p>The content, features, and functionality of the HealthVerify Platform (including the design, graphics, and code) are and will remain the exclusive property of HealthVerify Platform and its licensors. Our trademarks may not be used in connection with any product or service without the prior written consent of HealthVerify Platform.</p>
-                <h2>4. Termination</h2>
-                <p>We may terminate or suspend your access immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
-                <h2>5. Limitation of Liability</h2>
-                <ul>
-                    <li>Your access to or use of or inability to access or use the Service.</li>
-                    <li>Any conduct or content of any third party on the Service.</li>
-                    <li>Unauthorized access, use, or alteration of your transmissions or content.</li>
-                </ul>
-                <h2>6. Governing Law</h2>
-                <p>These Terms shall be governed and construed in accordance with the laws applicable in our jurisdiction, without regard to its conflict of law provisions.</p>
-            </div>
-        </section>
-    </main>
-    <footer class="main-footer">
-        <div class="container">
-            <p>&copy; 2025 HealthVerify Platform. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="#privacy">Privacy Policy</a> | 
-                <a href="#terms">Terms & Conditions</a> |
-                <a href="#faqs">FAQs</a>
-            </div>
+            <div class="verified-badge">✓ Verified</div>
+          </div>
+          <div class="verified-meta">
+            <span>Reg: <strong>MH12345</strong></span>
+            <span>Since: <strong>2015</strong></span>
+            <span>Status: <strong style="color:#12c4ab">Active</strong></span>
+          </div>
         </div>
-    </footer>
-    <script>
-    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const resultDiv = document.getElementById('bookingResult');
-        resultDiv.style.display = 'block';
-        resultDiv.className = 'result-section result-verified';
-        resultDiv.innerHTML = '✅ <strong>Appointment Confirmed!</strong> You will receive a confirmation email shortly.';
-        this.reset();
-        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        <div class="mini-stat-row">
+          <div class="mini-stat">
+            <div class="mini-stat-val">2s</div>
+            <div class="mini-stat-lab">Avg Verify Time</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-val">99.9%</div>
+            <div class="mini-stat-lab">Uptime</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-val">0₹</div>
+            <div class="mini-stat-lab">For Patients</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-box reveal">
+      <div class="section-label">Get Started Today</div>
+      <h2>Your health deserves verified care</h2>
+      <p>Join over 1.2 lakh patients who use Ayura to make safer healthcare decisions every day.</p>
+      <div class="cta-buttons">
+        <a href="login.html" class="btn-primary">Start for Free →</a>
+        <a href="#features" class="btn-outline">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Ayu<span>ra</span></div>
+    <div class="footer-copy">© 2025 Ayura Healthcare Platform. All rights reserved.</div>
+    <div class="footer-links">
+      <a href="index.html#privacy">Privacy</a>
+      <a href="index.html#terms">Terms</a>
+      <a href="index.html#faqs">FAQs</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
     });
-    const chatForm = document.getElementById('chatForm');
-    const chatInput = document.getElementById('chatInput');
-    const chatWindow = document.getElementById('chatWindow');
-    function botReply(userMsg) {
-        const msg = userMsg.toLowerCase();
-        if (msg.includes('fever')) return "A fever can be caused by many conditions, including infections. Please stay hydrated and consult a doctor if it persists.";
-        if (msg.includes('headache')) return "Headaches are common and may be due to stress, dehydration, or illness. If severe or persistent, seek medical care.";
-        if (msg.includes('appointment')) return "You can book an appointment with a verified doctor using our Appointment section!";
-        if (msg.includes('covid')) return "If you suspect COVID-19, isolate and contact your local health authority for testing and guidance.";
-        if (msg.includes('emergency')) return "If you have a medical emergency, call your local emergency number immediately!";
-        return "I'm here to provide general health information. For diagnosis or treatment, please consult a medical professional.";
-    }
-    chatForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const userMsg = chatInput.value.trim();
-        if (!userMsg) return;
-        const userDiv = document.createElement('div');
-        userDiv.className = 'message user-message';
-        userDiv.textContent = userMsg;
-        chatWindow.appendChild(userDiv);
-        setTimeout(() => {
-            const botDiv = document.createElement('div');
-            botDiv.className = 'message bot-message';
-            botDiv.textContent = botReply(userMsg);
-            chatWindow.appendChild(botDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }, 600);
-        chatInput.value = '';
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-    });
-    const mockDoctorDatabase = [
-        { name: "Dr. Rajesh Kumar", registrationNumber: "MH12345", state: "Maharashtra", specialization: "Cardiology", yearOfRegistration: 2015, status: "Active" },
-        { name: "Dr. Priya Sharma", registrationNumber: "DL67890", state: "Delhi", specialization: "Pediatrics", yearOfRegistration: 2018, status: "Active" },
-        { name: "Dr. Amit Patel", registrationNumber: "GJ11111", state: "Gujarat", specialization: "General Medicine", yearOfRegistration: 2012, status: "Active" }
-    ];
-    document.getElementById('verificationForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const doctorData = {
-            name: formData.get('doctorName').trim(),
-            registrationNumber: formData.get('registrationNumber').trim().toUpperCase(),
-            state: formData.get('state'),
-            specialization: formData.get('specialization').trim(),
-            yearOfRegistration: formData.get('yearOfRegistration')
-        };
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('resultSection').style.display = 'none';
-        document.getElementById('verifyBtn').disabled = true;
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        const isVerified = mockDoctorDatabase.find(doctor =>
-            doctor.name.toLowerCase().includes(doctorData.name.toLowerCase()) &&
-            doctor.registrationNumber === doctorData.registrationNumber &&
-            doctor.state === doctorData.state
-        );
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('verifyBtn').disabled = false;
-        const resultSection = document.getElementById('resultSection');
-        const resultIcon = document.getElementById('resultIcon');
-        const resultMessage = document.getElementById('resultMessage');
-        const doctorDetails = document.getElementById('doctorDetails');
-        resultSection.style.display = 'block';
-        if (isVerified) {
-            resultSection.className = 'result-section result-verified';
-            resultIcon.textContent = '✅';
-            resultMessage.innerHTML = `<strong>VERIFIED DOCTOR</strong><br>This doctor is registered and authentic`;
-            doctorDetails.innerHTML = `<strong>Verified Details:</strong><br>Name: ${isVerified.name}<br>Registration: ${isVerified.registrationNumber}<br>State: ${isVerified.state}<br>Specialization: ${isVerified.specialization}<br>Registered Since: ${isVerified.yearOfRegistration}<br>Status: ${isVerified.status}`;
-        } else {
-            resultSection.className = 'result-section result-fake';
-            resultIcon.textContent = '❌';
-            resultMessage.innerHTML = `<strong>NOT VERIFIED / FAKE DOCTOR</strong><br>No matching record found in our database`;
-            doctorDetails.innerHTML = `<strong>Searched For:</strong><br>Name: ${doctorData.name}<br>Registration: ${doctorData.registrationNumber}<br>State: ${doctorData.state}<br><br><em>⚠️ Please verify with local medical council or report if suspicious</em>`;
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
         }
-        resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-    document.getElementById('reportForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const reportData = {
-        doctorName: document.getElementById('fakeDoctorName').value,
-        registrationNumber: document.getElementById('fakeRegistrationNumber').value,
-        location: document.getElementById('location').value,
-        evidence: document.getElementById('evidence').value,
-        reporterContact: document.getElementById('reporterContact').value
-    };
-    fetch('http://localhost:3000/report-doctor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reportData)
-    })
-    .then(res => res.json())
-    .then(data => {
-        const resultDiv = document.getElementById('reportResult');
-        resultDiv.style.display = 'block';
-        resultDiv.className = 'result-section report-submitted';
-        resultDiv.innerHTML = `🚨 <strong>Report Submitted!</strong><br>
-            Report ID: ${data.reportId}<br>
-            Status: Under Investigation<br>
-            Thank you for helping maintain healthcare standards.`;
-        document.getElementById('reportForm').reset();
-        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    })
-    .catch(() => {
-        alert('Error: Could not connect to server.');
-    });
-});
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const resultDiv = document.getElementById('contactResult');
-        resultDiv.style.display = 'block';
-        resultDiv.className = 'result-section result-verified';
-        resultDiv.innerHTML = '🚀 <strong>Message Sent!</strong> We will get back to you soon at your provided email address.';
-        this.reset();
-        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-    document.querySelectorAll('.accordion-question').forEach(button => {
-        button.addEventListener('click', () => {
-            const item = button.closest('.accordion-item');
-            const answer = button.nextElementSibling;
-            const isActive = item.classList.contains('active');
-            document.querySelectorAll('.accordion-item.active').forEach(activeItem => {
-                if (activeItem !== item) {
-                    activeItem.classList.remove('active');
-                    activeItem.querySelector('.accordion-answer').style.maxHeight = 0;
-                }
-            });
-            if (!isActive) {
-                item.classList.add('active');
-                answer.style.maxHeight = answer.scrollHeight + "px";
-            } else {
-                item.classList.remove('active');
-                answer.style.maxHeight = 0;
-            }
-        });
-    });
-    </script>
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
