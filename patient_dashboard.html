@@ -1,80 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Dashboard | AYURA Services</title>
-    <link rel="stylesheet" href="style.css"> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Dashboard | Ayura</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+  
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --teal:#0a9e8a;--teal-l:#12c4ab;--teal-d:#077a6b;
+  --navy:#0b1e34;--navy2:#112844;--navy3:#0e2240;
+  --white:#fff;--muted:rgba(255,255,255,0.5);--border:rgba(255,255,255,0.08);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(11,30,52,0.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;
+  justify-content:space-between;height:64px;}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--white);text-decoration:none;letter-spacing:-0.03em;}
+.nav-logo span{color:var(--teal-l);}
+.nav-links{display:flex;gap:0.5rem;list-style:none;align-items:center;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;
+  padding:0.45rem 0.9rem;border-radius:8px;transition:all 0.2s;}
+.nav-links a:hover{color:var(--white);background:rgba(255,255,255,0.06);}
+.nav-links a.active{color:var(--white);background:rgba(10,158,138,0.15);color:var(--teal-l);}
+.nav-links .logout{color:#e74c3c !important;}
+.nav-links .logout:hover{background:rgba(231,76,60,0.1) !important;color:#e74c3c !important;}
+
+/* PAGE WRAP */
+.page{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem;}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:2.5rem;}
+.page-header .badge{display:inline-block;background:rgba(10,158,138,0.15);border:1px solid rgba(10,158,138,0.3);
+  color:var(--teal-l);font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  padding:0.3rem 0.9rem;border-radius:50px;margin-bottom:0.8rem;}
+.page-header h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;
+  letter-spacing:-0.03em;margin-bottom:0.4rem;}
+.page-header p{color:var(--muted);font-size:0.95rem;font-weight:300;}
+
+/* CARDS */
+.card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:18px;padding:1.8rem;}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:1.2rem;
+  padding-bottom:0.8rem;border-bottom:1px solid var(--border);}
+
+/* FORM ELEMENTS */
+.form-group{margin-bottom:1.3rem;}
+.form-group label{display:block;font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.55);
+  text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.5rem;}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:0.8rem 1rem;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);
+  font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s,background 0.2s;}
+.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,0.2);}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--teal);background:rgba(255,255,255,0.09);}
+.form-group select option{background:#1a3a5c;color:var(--white);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+
+/* BUTTONS */
+.btn-primary{background:var(--teal);color:var(--white);border:none;padding:0.85rem 1.5rem;
+  border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;
+  cursor:pointer;transition:all 0.2s;width:100%;}
+.btn-primary:hover{background:var(--teal-l);transform:translateY(-2px);box-shadow:0 8px 25px rgba(10,158,138,0.3);}
+.btn-primary:disabled{background:rgba(255,255,255,0.1);cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* RESULT */
+.result{margin-top:1.5rem;padding:1.2rem;border-radius:12px;text-align:center;display:none;font-weight:600;}
+.result-ok{background:rgba(39,174,96,0.12);border:1px solid rgba(39,174,96,0.3);color:#2ecc71;}
+.result-err{background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;}
+.result-icon{font-size:2rem;display:block;margin-bottom:0.5rem;}
+.result-detail{margin-top:0.6rem;font-size:0.82rem;font-weight:400;opacity:0.8;line-height:1.6;}
+
+/* SPINNER */
+.spinner-wrap{display:none;text-align:center;padding:1rem;}
+.spinner{border:3px solid rgba(255,255,255,0.1);border-top:3px solid var(--teal);
+  border-radius:50%;width:32px;height:32px;animation:spin 0.8s linear infinite;margin:0 auto 0.5rem;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:1.5rem 2rem;text-align:center;
+  color:rgba(255,255,255,0.25);font-size:0.82rem;margin-top:3rem;}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .form-row{grid-template-columns:1fr;}
+  .nav-links .hide-mob{display:none;}
+  .page{padding:1.5rem 1rem;}
+}
+</style>
+
 </head>
 <body>
-    <header class="main-header">
-        <div class="container header-content">
-            <h1 class="logo">AYURA Patient Hub</h1>
-            <nav>
-                <ul>
-                    <li><a href="patient_dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="verification.html">Verification</a></li>
-                    <li><a href="appointment.html">Appointments</a></li>
-                    <li><a href="chatbot.html">AI Chatbot</a></li>
-                    <li><a href="login.html">Logout</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+  <nav class="nav">
+    <a class="nav-logo" href="index.html">Ayu<span>ra</span></a>
+    <ul class="nav-links">
+      
+      <li><a href="patient_dashboard.html" class="active">🏠 Dashboard</a></li>
+      <li><a href="verification.html" class="hide-mob">🏥 Verify</a></li>
+      <li><a href="appointment.html" class="hide-mob">📅 Appointments</a></li>
+      <li><a href="chatbot.html" class="hide-mob">🤖 Chatbot</a></li>
+      <li><a href="login.html" class="logout">Logout</a></li>
+    </ul>
+  </nav>
+  
+<div class="page">
+  <div class="page-header">
+    <div class="badge">Patient Portal</div>
+    <h1>Welcome Back! 👋</h1>
+    <p>Your centralized access point for trusted healthcare services.</p>
+  </div>
 
-    <main class="page-main">
-        <div class="container">
-            <div class="dashboard-header">
-                <h2>Welcome Back, Patient!</h2>
-                <p>Your centralized access point for trusted healthcare and original AYURA services.</p>
-            </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;margin-bottom:2rem;">
+    <a href="verification.html" style="text-decoration:none;">
+      <div class="card" style="cursor:pointer;transition:all 0.25s;border-color:rgba(10,158,138,0.2);"
+        onmouseover="this.style.transform='translateY(-5px)';this.style.borderColor='rgba(10,158,138,0.5)'"
+        onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(10,158,138,0.2)'">
+        <div style="font-size:2rem;margin-bottom:0.8rem;">🏥</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.4rem;">Verify a Doctor</div>
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.45);line-height:1.5;">Confirm credentials of any practitioner instantly.</div>
+        <div style="margin-top:1rem;font-size:0.82rem;color:#12c4ab;font-weight:600;">Go →</div>
+      </div>
+    </a>
+    <a href="appointment.html" style="text-decoration:none;">
+      <div class="card" style="cursor:pointer;transition:all 0.25s;border-color:rgba(230,126,34,0.2);"
+        onmouseover="this.style.transform='translateY(-5px)';this.style.borderColor='rgba(230,126,34,0.5)'"
+        onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(230,126,34,0.2)'">
+        <div style="font-size:2rem;margin-bottom:0.8rem;">📅</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.4rem;">Book Appointment</div>
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.45);line-height:1.5;">Schedule with verified health providers.</div>
+        <div style="margin-top:1rem;font-size:0.82rem;color:#e67e22;font-weight:600;">Go →</div>
+      </div>
+    </a>
+    <a href="chatbot.html" style="text-decoration:none;">
+      <div class="card" style="cursor:pointer;transition:all 0.25s;border-color:rgba(155,89,182,0.2);"
+        onmouseover="this.style.transform='translateY(-5px)';this.style.borderColor='rgba(155,89,182,0.5)'"
+        onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(155,89,182,0.2)'">
+        <div style="font-size:2rem;margin-bottom:0.8rem;">🤖</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.4rem;">AI Health Chatbot</div>
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.45);line-height:1.5;">Get health info and guidance 24/7.</div>
+        <div style="margin-top:1rem;font-size:0.82rem;color:#9b59b6;font-weight:600;">Go →</div>
+      </div>
+    </a>
+    <a href="emr_view.html" style="text-decoration:none;">
+      <div class="card" style="cursor:pointer;transition:all 0.25s;border-color:rgba(52,152,219,0.2);"
+        onmouseover="this.style.transform='translateY(-5px)';this.style.borderColor='rgba(52,152,219,0.5)'"
+        onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(52,152,219,0.2)'">
+        <div style="font-size:2rem;margin-bottom:0.8rem;">📋</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.4rem;">My Health Records</div>
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.45);line-height:1.5;">View your EMR and consent history.</div>
+        <div style="margin-top:1rem;font-size:0.82rem;color:#3498db;font-weight:600;">Go →</div>
+      </div>
+    </a>
+  </div>
 
-            <div class="dashboard-grid">
-                
-                <a href="verification.html" class="dashboard-card">
-                    <div class="dashboard-icon" style="color: #3498db;">🏥</div>
-                    <h3>Verify a Doctor</h3>
-                    <p>Confirm the credentials of any practitioner instantly for your peace of mind.</p>
-                </a>
-                
-                <a href="appointment.html" class="dashboard-card">
-                    <div class="dashboard-icon" style="color: #e67e22;">📅</div>
-                    <h3>Book an Appointment</h3>
-                    <p>Schedule your next consultation with verified health providers.</p>
-                </a>
-
-                <a href="chatbot.html" class="dashboard-card">
-                    <div class="dashboard-icon" style="color: #9b59b6;">🤖</div>
-                    <h3>AI Health Chatbot</h3>
-                    <p>Get preliminary information and answers to general health queries.</p>
-                </a>
-
-                <a href="emr_view.html" class="dashboard-card" style="background: #f1c40f; color: #2c3e50; box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);">
-                    <div class="dashboard-icon" style="color: #2c3e50;">🔒</div>
-                    <h3>My EMR (View/Consent)</h3>
-                    <p>See when consent is granted for your records. (Doctor use only).</p>
-                </a>
-            </div>
-            
-            <div style="text-align: center; padding: 40px; border-top: 1px solid #eee; margin-top: 30px;">
-                <h3>Need Technical Info? (For Judges)</h3>
-                <p>Access the core microservice documentation and demo links:</p>
-                <p>
-                    <a href="demo.html" class="hero-btn verify-btn" style="margin: 5px;">API Demo</a>
-                    <a href="tech_docs.html" class="hero-btn learn-btn" style="margin: 5px;">Technical Docs</a>
-                </p>
-            </div>
-        </div>
-    </main>
-
-    <footer class="main-footer">
-        <div class="container">
-            <p>&copy; 2024 AYURA. A Dual-Role Platform.</p>
-            <div class="footer-links">
-                <a href="privacy.html">Privacy Policy</a> | 
-                <a href="terms.html">Terms & Conditions</a>
-            </div>
-        </div>
-    </footer>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <div style="font-size:2rem;">💡</div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.2rem;">Pro Tip</div>
+        <div style="font-size:0.88rem;color:var(--muted);">Always verify your doctor's credentials before booking an appointment. It takes less than 30 seconds!</div>
+      </div>
+    </div>
+  </div>
+</div>
+  <footer>&copy; 2025 Ayura Healthcare Platform &nbsp;|&nbsp; All rights reserved.</footer>
 </body>
 </html>
