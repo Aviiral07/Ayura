@@ -11,7 +11,7 @@ document.getElementById('doctorForm').addEventListener('submit', function(event)
   };
 
   // Send POST request to backend
-  const response = fetch('http://localhost:3000/verify-doctor', {
+  const response = fetch('https://ayura-backend.onrender.com/api/verify/doctor', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ document.getElementById('appointmentForm').addEventListener('submit', function(e
         reason: document.getElementById('reason').value
     };
 
-    fetch('http://localhost:3000/book-appointment', {
+    fetch('https://ayura-backend.onrender.com/api/appointments/book', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(appointmentData)
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
         // Bot se response lo
-        fetch('http://127.0.0.1:5000/chatbot', {
+        fetch('https://ayura-backend.onrender.com/api/chatbot', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: userMsg })
