@@ -35,44 +35,52 @@
     </div>
 
     <script>
-        let currentRole = 'doctor';
-        const loginForm = document.getElementById('loginForm');
-        const doctorBtn = document.getElementById('doctorBtn');
-        const patientBtn = document.getElementById('patientBtn');
+       let currentRole = 'doctor';
+const loginForm = document.getElementById('loginForm');
+const doctorBtn = document.getElementById('doctorBtn');
+const patientBtn = document.getElementById('patientBtn');
 
-        // --- Role Switching Logic ---
-        doctorBtn.addEventListener('click', () => {
-            currentRole = 'doctor';
-            doctorBtn.classList.add('active');
-            patientBtn.classList.remove('active');
-            document.getElementById('username').placeholder = 'Enter Doctor ID / Registration No.';
-        });
+doctorBtn.addEventListener('click', () => {
+    currentRole = 'doctor';
+    doctorBtn.classList.add('active');
+    patientBtn.classList.remove('active');
+    document.getElementById('username').placeholder = 'Enter Doctor ID';
+});
 
-        patientBtn.addEventListener('click', () => {
-            currentRole = 'patient';
-            patientBtn.classList.add('active');
-            doctorBtn.classList.remove('active');
-            document.getElementById('username').placeholder = 'Enter ABHA ID';
-        });
+patientBtn.addEventListener('click', () => {
+    currentRole = 'patient';
+    patientBtn.classList.add('active');
+    doctorBtn.classList.remove('active');
+    document.getElementById('username').placeholder = 'Enter ABHA ID';
+});
 
-        // --- Login Simulation and Redirection ---
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            
-            // In a real application, the backend would handle credential check and role assignment.
-            // Here, we simulate redirection based on the selected role.
+loginForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-            if (currentRole === 'doctor') {
-                // Doctor gets the EMR/FHIR Microservice access page
-                alert('Doctor login successful! Redirecting to EMR Services.');
-                window.location.href = 'emr_view.html'; 
-            } else if (currentRole === 'patient') {
-                // Patient gets the old AYURA services dashboard
-                alert('Patient login successful! Redirecting to AYURA Services.');
-                window.location.href = 'patient_dashboard.html'; 
+    fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, role: currentRole })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            if (data.role === 'doctor') {
+                window.location.href = 'emr_view.html';
+            } else {
+                window.location.href = 'patient_dashboard.html';
             }
-        });
+        } else {
+            alert('Login failed: ' + data.message);
+        }
+    })
+    .catch(() => {
+        alert('Error: Could not connect to server. Please make sure node server.js is running.');
+    });
+});
     </script>
 </body>
 </html>

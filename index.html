@@ -511,14 +511,35 @@
         resultSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
     document.getElementById('reportForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+    e.preventDefault();
+    const reportData = {
+        doctorName: document.getElementById('fakeDoctorName').value,
+        registrationNumber: document.getElementById('fakeRegistrationNumber').value,
+        location: document.getElementById('location').value,
+        evidence: document.getElementById('evidence').value,
+        reporterContact: document.getElementById('reporterContact').value
+    };
+    fetch('http://localhost:3000/report-doctor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reportData)
+    })
+    .then(res => res.json())
+    .then(data => {
         const resultDiv = document.getElementById('reportResult');
         resultDiv.style.display = 'block';
         resultDiv.className = 'result-section report-submitted';
-        resultDiv.innerHTML = '🚨 <strong>Report Submitted!</strong> Thank you for helping us maintain healthcare standards. We will investigate this claim.';
-        this.reset();
+        resultDiv.innerHTML = `🚨 <strong>Report Submitted!</strong><br>
+            Report ID: ${data.reportId}<br>
+            Status: Under Investigation<br>
+            Thank you for helping maintain healthcare standards.`;
+        document.getElementById('reportForm').reset();
         resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    })
+    .catch(() => {
+        alert('Error: Could not connect to server.');
     });
+});
     document.getElementById('contactForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const resultDiv = document.getElementById('contactResult');

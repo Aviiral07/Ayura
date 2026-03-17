@@ -338,7 +338,75 @@ app.post('/verify-doctor', (req, res) => {
         res.json({ verified: false });
     }
 });
+// Appointments store karne ke liye
+const appointments = [];
 
+app.post('/book-appointment', (req, res) => {
+    const appointment = req.body;
+    appointment.id = Date.now();
+    appointment.status = "Confirmed";
+    appointments.push(appointment);
+    console.log("New appointment:", appointment);
+    res.json({ 
+        success: true, 
+        message: "Appointment booked successfully!",
+        appointment: appointment
+    });
+});
+
+app.get('/get-appointments', (req, res) => {
+    res.json(appointments);
+});
+// Users database
+const users = [
+    { username: "doctor1", password: "doc123", role: "doctor" },
+    { username: "doctor2", password: "doc456", role: "doctor" },
+    { username: "patient1", password: "pat123", role: "patient" },
+    { username: "patient2", password: "pat456", role: "patient" }
+];
+
+app.post('/login', (req, res) => {
+    const { username, password, role } = req.body;
+    
+    const user = users.find(u => 
+        u.username === username && 
+        u.password === password && 
+        u.role === role
+    );
+    
+    if (user) {
+        res.json({ 
+            success: true, 
+            role: user.role,
+            message: "Login successful!" 
+        });
+    } else {
+        res.json({ 
+            success: false, 
+            message: "Galat username ya password!" 
+        });
+    }
+});
+// Reports store karne ke liye
+const reports = [];
+
+app.post('/report-doctor', (req, res) => {
+    const report = req.body;
+    report.id = Date.now();
+    report.status = "Under Investigation";
+    report.submittedAt = new Date().toISOString();
+    reports.push(report);
+    console.log("New report received:", report);
+    res.json({ 
+        success: true, 
+        message: "Report submitted successfully. We will investigate.",
+        reportId: report.id
+    });
+});
+
+app.get('/get-reports', (req, res) => {
+    res.json(reports);
+});
 app.listen(3000, () => {
     console.log('Server running on port 3000');
 });
