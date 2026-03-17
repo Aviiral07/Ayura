@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 18
 
-      - name: Fix frontend package.json
+      - name: Fix corrupt JSON files
         run: |
           cat > frontend/ayura-ui/package.json << 'EOF'
           {
@@ -52,6 +52,26 @@ jobs:
               "start": "vite",
               "build": "vite build"
             }
+          }
+          EOF
+
+          cat > frontend/ayura-ui/tsconfig.json << 'EOF'
+          {
+            "compilerOptions": {
+              "target": "ES2020",
+              "useDefineForClassFields": true,
+              "lib": ["ES2020", "DOM", "DOM.Iterable"],
+              "module": "ESNext",
+              "skipLibCheck": true,
+              "moduleResolution": "bundler",
+              "allowImportingTsExtensions": true,
+              "resolveJsonModule": true,
+              "isolatedModules": true,
+              "noEmit": true,
+              "jsx": "react-jsx",
+              "strict": true
+            },
+            "include": ["*.tsx", "*.ts"]
           }
           EOF
 
