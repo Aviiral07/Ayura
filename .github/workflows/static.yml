@@ -29,6 +29,32 @@ jobs:
         with:
           node-version: 18
 
+      - name: Fix frontend package.json
+        run: |
+          cat > frontend/ayura-ui/package.json << 'EOF'
+          {
+            "name": "ayura-ui",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "react": "^18.2.0",
+              "react-dom": "^18.2.0",
+              "styled-components": "^6.0.0"
+            },
+            "devDependencies": {
+              "vite": "^4.0.0",
+              "@vitejs/plugin-react": "^4.0.0",
+              "typescript": "^5.2.0",
+              "@types/react": "^18.2.0",
+              "@types/react-dom": "^18.2.0"
+            },
+            "scripts": {
+              "start": "vite",
+              "build": "vite build"
+            }
+          }
+          EOF
+
       - name: Install dependencies
         run: npm install
 
