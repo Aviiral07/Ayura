@@ -1,37 +1,258 @@
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Ayura</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0b1e34;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    /* background glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(10,158,138,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+    }
 
-jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: white;
+      text-align: center;
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.03em;
+    }
+    .logo span { color: #12c4ab; }
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.88rem;
+      margin-bottom: 2rem;
+    }
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
+    /* role tabs */
+    .role-tabs {
+      display: flex;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 1.8rem;
+      gap: 4px;
+    }
+    .role-tab {
+      flex: 1;
+      padding: 0.65rem;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .role-tab.active {
+      background: #0a9e8a;
+      color: white;
+      font-weight: 600;
+    }
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: white;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      margin-bottom: 1.2rem;
+      transition: border-color 0.2s, background 0.2s;
+      outline: none;
+    }
+    input::placeholder { color: rgba(255,255,255,0.25); }
+    input:focus {
+      border-color: #0a9e8a;
+      background: rgba(255,255,255,0.09);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: #0a9e8a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      margin-top: 0.4rem;
+    }
+    .login-btn:hover {
+      background: #12c4ab;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(10,158,138,0.35);
+    }
+
+    .hint {
+      background: rgba(10,158,138,0.1);
+      border: 1px solid rgba(10,158,138,0.25);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+    }
+    .hint strong { color: #12c4ab; }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: rgba(255,255,255,0.7); }
+
+    /* error message */
+    .error-msg {
+      background: rgba(231,76,60,0.15);
+      border: 1px solid rgba(231,76,60,0.3);
+      color: #e74c3c;
+      border-radius: 10px;
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="logo">Ayu<span>ra</span></div>
+    <div class="subtitle">Sign in to your account</div>
+
+    <!-- Role Tabs -->
+    <div class="role-tabs">
+      <button class="role-tab active" id="patientTab" onclick="setRole('patient')">👤 Patient</button>
+      <button class="role-tab" id="doctorTab" onclick="setRole('doctor')">🩺 Doctor</button>
+    </div>
+
+    <!-- Hint -->
+    <div class="hint" id="hintBox">
+      <strong>Demo credentials:</strong><br>
+      Username: <strong>patient</strong> &nbsp;|&nbsp; Password: <strong>1234</strong>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="errorMsg">❌ Invalid credentials. Please try again.</div>
+
+    <!-- Form -->
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <label id="userLabel">Patient ID / ABHA ID</label>
+      <input type="text" id="username" placeholder="Enter your ID" required autocomplete="off" />
+
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter password" required />
+
+      <button type="submit" class="login-btn">Login →</button>
+    </form>
+
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
+
+  <script>
+    let currentRole = 'patient';
+
+    // Demo credentials
+    const CREDENTIALS = {
+      patient: { username: 'patient', password: '1234', redirect: 'patient_dashboard.html' },
+      doctor:  { username: 'doctor',  password: '1234', redirect: 'emr_view.html' }
+    };
+
+    function setRole(role) {
+      currentRole = role;
+
+      document.getElementById('patientTab').classList.toggle('active', role === 'patient');
+      document.getElementById('doctorTab').classList.toggle('active', role === 'doctor');
+
+      document.getElementById('userLabel').textContent =
+        role === 'patient' ? 'Patient ID / ABHA ID' : 'Doctor ID / Registration No.';
+
+      document.getElementById('hintBox').innerHTML =
+        role === 'patient'
+          ? '<strong>Demo credentials:</strong><br>Username: <strong>patient</strong> &nbsp;|&nbsp; Password: <strong>1234</strong>'
+          : '<strong>Demo credentials:</strong><br>Username: <strong>doctor</strong> &nbsp;|&nbsp; Password: <strong>1234</strong>';
+
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const creds    = CREDENTIALS[currentRole];
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (username === creds.username && password === creds.password) {
+        errorMsg.style.display = 'none';
+        // Save role to sessionStorage so dashboard knows who is logged in
+        sessionStorage.setItem('ayura_role', currentRole);
+        sessionStorage.setItem('ayura_user', username);
+        window.location.href = creds.redirect;
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>
