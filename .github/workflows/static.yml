@@ -29,51 +29,229 @@ jobs:
         with:
           node-version: 18
 
-      - name: Fix corrupt JSON files
+      - name: Write all frontend files
         run: |
-          cat > frontend/ayura-ui/package.json << 'EOF'
-          {
-            "name": "ayura-ui",
-            "version": "1.0.0",
-            "private": true,
-            "dependencies": {
-              "react": "^18.2.0",
-              "react-dom": "^18.2.0",
-              "styled-components": "^6.0.0"
-            },
-            "devDependencies": {
-              "vite": "^4.0.0",
-              "@vitejs/plugin-react": "^4.0.0",
-              "typescript": "^5.2.0",
-              "@types/react": "^18.2.0",
-              "@types/react-dom": "^18.2.0"
-            },
-            "scripts": {
-              "start": "vite",
-              "build": "vite build"
-            }
-          }
-          EOF
+          mkdir -p frontend/ayura-ui
 
-          cat > frontend/ayura-ui/tsconfig.json << 'EOF'
-          {
-            "compilerOptions": {
-              "target": "ES2020",
-              "useDefineForClassFields": true,
-              "lib": ["ES2020", "DOM", "DOM.Iterable"],
-              "module": "ESNext",
-              "skipLibCheck": true,
-              "moduleResolution": "bundler",
-              "allowImportingTsExtensions": true,
-              "resolveJsonModule": true,
-              "isolatedModules": true,
-              "noEmit": true,
-              "jsx": "react-jsx",
-              "strict": true
-            },
-            "include": ["*.tsx", "*.ts"]
-          }
-          EOF
+          cat > frontend/ayura-ui/package.json << 'PKGEOF'
+{
+  "name": "ayura-ui",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^6.0.0"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.2.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build"
+  }
+}
+PKGEOF
+
+          cat > frontend/ayura-ui/tsconfig.json << 'TSEOF'
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true
+  },
+  "include": ["*.tsx", "*.ts"]
+}
+TSEOF
+
+          cat > frontend/ayura-ui/index.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ayura</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
+HTMLEOF
+
+          cat > frontend/ayura-ui/index.tsx << 'IDXEOF'
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { App } from "./App";
+
+const container = document.getElementById("root");
+const root = createRoot(container!);
+root.render(<App />);
+IDXEOF
+
+          cat > frontend/ayura-ui/App.tsx << 'APPEOF'
+import React from "react";
+import { Navbar } from "./Navbar";
+import { Landing } from "./Landing";
+import { Login } from "./Login";
+
+export const App: React.FC = () => {
+  const [view, setView] = React.useState<"landing" | "login">("landing");
+
+  return (
+    <>
+      <Navbar />
+      {view === "landing" ? (
+        <Landing onLogin={() => setView("login")} />
+      ) : (
+        <Login onBack={() => setView("landing")} />
+      )}
+    </>
+  );
+};
+APPEOF
+
+          cat > frontend/ayura-ui/Navbar.tsx << 'NAVEOF'
+import React from "react";
+
+export const Navbar: React.FC = () => {
+  return (
+    <nav style={{
+      background: "#1a73e8",
+      color: "white",
+      padding: "1rem 2rem",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between"
+    }}>
+      <h1 style={{ margin: 0, fontSize: "1.5rem" }}>🏥 Ayura</h1>
+      <span style={{ fontSize: "0.9rem" }}>Healthcare Platform</span>
+    </nav>
+  );
+};
+NAVEOF
+
+          cat > frontend/ayura-ui/Landing.tsx << 'LANDEOF'
+import React from "react";
+
+interface LandingProps {
+  onLogin: () => void;
+}
+
+export const Landing: React.FC<LandingProps> = ({ onLogin }) => {
+  return (
+    <div style={{
+      minHeight: "80vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f0f4ff",
+      padding: "2rem"
+    }}>
+      <h2 style={{ fontSize: "2.5rem", color: "#1a73e8", marginBottom: "1rem" }}>
+        Welcome to Ayura
+      </h2>
+      <p style={{ fontSize: "1.2rem", color: "#555", marginBottom: "2rem", textAlign: "center" }}>
+        Your trusted healthcare platform connecting patients and doctors.
+      </p>
+      <button
+        onClick={onLogin}
+        style={{
+          background: "#1a73e8",
+          color: "white",
+          border: "none",
+          padding: "0.8rem 2rem",
+          borderRadius: "8px",
+          fontSize: "1rem",
+          cursor: "pointer"
+        }}
+      >
+        Get Started →
+      </button>
+    </div>
+  );
+};
+LANDEOF
+
+          cat > frontend/ayura-ui/Login.tsx << 'LOGEOF'
+import React from "react";
+
+interface LoginProps {
+  onBack: () => void;
+}
+
+export const Login: React.FC<LoginProps> = ({ onBack }) => {
+  return (
+    <div style={{
+      minHeight: "80vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#f0f4ff"
+    }}>
+      <div style={{
+        background: "white",
+        padding: "2rem",
+        borderRadius: "12px",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        width: "100%",
+        maxWidth: "400px"
+      }}>
+        <h2 style={{ color: "#1a73e8", marginBottom: "1.5rem" }}>Login</h2>
+        <input
+          type="email"
+          placeholder="Email"
+          style={{ width: "100%", padding: "0.8rem", marginBottom: "1rem", borderRadius: "6px", border: "1px solid #ddd", boxSizing: "border-box" }}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          style={{ width: "100%", padding: "0.8rem", marginBottom: "1.5rem", borderRadius: "6px", border: "1px solid #ddd", boxSizing: "border-box" }}
+        />
+        <button style={{
+          width: "100%",
+          background: "#1a73e8",
+          color: "white",
+          border: "none",
+          padding: "0.8rem",
+          borderRadius: "6px",
+          fontSize: "1rem",
+          cursor: "pointer",
+          marginBottom: "1rem"
+        }}>
+          Login
+        </button>
+        <button onClick={onBack} style={{
+          width: "100%",
+          background: "transparent",
+          color: "#1a73e8",
+          border: "1px solid #1a73e8",
+          padding: "0.8rem",
+          borderRadius: "6px",
+          fontSize: "1rem",
+          cursor: "pointer"
+        }}>
+          ← Back
+        </button>
+      </div>
+    </div>
+  );
+};
+LOGEOF
 
       - name: Install dependencies
         run: npm install
