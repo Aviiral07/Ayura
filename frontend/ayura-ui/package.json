@@ -1,1 +1,25 @@
-{\n  "name": "ayura-ui",\n  "version": "1.0.0",\n  "private": true,\n  "dependencies": {\n    "react": "^18.2.0",\n    "react-dom": "^18.2.0",\n    "styled-components": "^6.0.0"\n  },\n  "devDependencies": {\n    "typescript": "^5.2.0"\n  },\n  "scripts": {\n    "start": "webpack serve --mode development --open",\n    "build": "webpack --mode production"\n  }\n}
+{
+  "name": "ayura-backend",
+  "version": "1.0.0",
+  "description": "Ayura Healthcare Platform Backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.0",
+    "nodemailer": "^6.9.7",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
