@@ -1,6 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+const connectDB = require('./config/db');
+
 const app = express();
+
+// ── Connect to MongoDB ──
+connectDB();
 
 // ── Middleware ──
 app.use(cors({
@@ -23,16 +28,8 @@ app.use('/api/verify',       require('./routes/verify'));
 app.get('/', (req, res) => {
   res.json({
     status: 'ok',
-    message: 'Ayura Backend is running!',
-    version: '1.0.0',
-    endpoints: [
-      'POST /api/auth/register',
-      'POST /api/auth/login',
-      'GET  /api/auth/me',
-      'POST /api/appointments/book',
-      'GET  /api/appointments/my',
-      'POST /api/verify/doctor'
-    ]
+    message: 'Ayura Backend is running with MongoDB!',
+    version: '2.0.0'
   });
 });
 
