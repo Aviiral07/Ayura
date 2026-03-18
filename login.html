@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'DM Sans', sans-serif;
       background: #0b1e34;
@@ -17,8 +16,6 @@
       justify-content: center;
       padding: 2rem;
     }
-
-    /* background glow */
     body::before {
       content: '';
       position: fixed;
@@ -28,7 +25,6 @@
       background: radial-gradient(circle, rgba(10,158,138,0.15) 0%, transparent 70%);
       pointer-events: none;
     }
-
     .card {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.1);
@@ -39,7 +35,6 @@
       position: relative;
       z-index: 1;
     }
-
     .logo {
       font-family: 'Syne', sans-serif;
       font-size: 1.8rem;
@@ -50,21 +45,18 @@
       letter-spacing: -0.03em;
     }
     .logo span { color: #12c4ab; }
-
     .subtitle {
       text-align: center;
       color: rgba(255,255,255,0.45);
       font-size: 0.88rem;
       margin-bottom: 2rem;
     }
-
-    /* role tabs */
     .role-tabs {
       display: flex;
       background: rgba(255,255,255,0.05);
       border-radius: 12px;
       padding: 4px;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.5rem;
       gap: 4px;
     }
     .role-tab {
@@ -80,12 +72,35 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .role-tab.active {
-      background: #0a9e8a;
-      color: white;
+    .role-tab.active { background: #0a9e8a; color: white; font-weight: 600; }
+    .google-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: white;
+      color: #333;
+      border: none;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
       font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s, transform 0.2s;
+      margin-bottom: 1.2rem;
     }
-
+    .google-btn:hover { background: #f0f0f0; transform: translateY(-2px); }
+    .google-btn img { width: 20px; height: 20px; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.2rem;
+    }
+    .divider hr { flex: 1; border: none; border-top: 1px solid rgba(255,255,255,0.1); }
+    .divider span { color: rgba(255,255,255,0.3); font-size: 0.8rem; }
     label {
       display: block;
       font-size: 0.82rem;
@@ -95,7 +110,6 @@
       letter-spacing: 0.06em;
       margin-bottom: 0.5rem;
     }
-
     input {
       width: 100%;
       padding: 0.85rem 1rem;
@@ -110,11 +124,7 @@
       outline: none;
     }
     input::placeholder { color: rgba(255,255,255,0.25); }
-    input:focus {
-      border-color: #0a9e8a;
-      background: rgba(255,255,255,0.09);
-    }
-
+    input:focus { border-color: #0a9e8a; background: rgba(255,255,255,0.09); }
     .login-btn {
       width: 100%;
       padding: 0.9rem;
@@ -127,38 +137,17 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-      margin-top: 0.4rem;
+      margin-top: 0.2rem;
     }
-    .login-btn:hover {
-      background: #12c4ab;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(10,158,138,0.35);
-    }
-
-    .hint {
-      background: rgba(10,158,138,0.1);
-      border: 1px solid rgba(10,158,138,0.25);
-      border-radius: 10px;
-      padding: 0.8rem 1rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.82rem;
-      color: rgba(255,255,255,0.55);
-      line-height: 1.5;
-    }
-    .hint strong { color: #12c4ab; }
-
-    .back-link {
-      display: block;
+    .login-btn:hover { background: #12c4ab; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(10,158,138,0.35); }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .toggle-link {
       text-align: center;
-      margin-top: 1.5rem;
-      color: rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.45);
       font-size: 0.85rem;
-      text-decoration: none;
-      transition: color 0.2s;
+      margin-bottom: 1.3rem;
     }
-    .back-link:hover { color: rgba(255,255,255,0.7); }
-
-    /* error message */
+    .toggle-link a { color: #12c4ab; cursor: pointer; text-decoration: underline; }
     .error-msg {
       background: rgba(231,76,60,0.15);
       border: 1px solid rgba(231,76,60,0.3);
@@ -169,88 +158,198 @@
       margin-bottom: 1rem;
       display: none;
     }
+    .success-msg {
+      background: rgba(10,158,138,0.15);
+      border: 1px solid rgba(10,158,138,0.3);
+      color: #12c4ab;
+      border-radius: 10px;
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: rgba(255,255,255,0.7); }
   </style>
 </head>
 <body>
 
   <div class="card">
     <div class="logo">Ayu<span>ra</span></div>
-    <div class="subtitle">Sign in to your account</div>
+    <div class="subtitle" id="formSubtitle">Sign in to your account</div>
 
-    <!-- Role Tabs -->
     <div class="role-tabs">
       <button class="role-tab active" id="patientTab" onclick="setRole('patient')">👤 Patient</button>
       <button class="role-tab" id="doctorTab" onclick="setRole('doctor')">🩺 Doctor</button>
     </div>
 
-    <!-- Hint -->
-    <div class="hint" id="hintBox">
-      <strong>Demo credentials:</strong><br>
-      Username: <strong>patient</strong> &nbsp;|&nbsp; Password: <strong>1234</strong>
+    <button class="google-btn" onclick="googleLogin()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+      Continue with Google
+    </button>
+
+    <div class="divider"><hr /><span>or</span><hr /></div>
+
+    <div class="toggle-link" id="toggleText">
+      New user? <a onclick="toggleMode()">Register here</a>
     </div>
 
-    <!-- Error -->
-    <div class="error-msg" id="errorMsg">❌ Invalid credentials. Please try again.</div>
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="success-msg" id="successMsg"></div>
 
-    <!-- Form -->
-    <form id="loginForm" onsubmit="handleLogin(event)">
-      <label id="userLabel">Patient ID / ABHA ID</label>
-      <input type="text" id="username" placeholder="Enter your ID" required autocomplete="off" />
-
+    <form id="authForm" onsubmit="handleSubmit(event)">
+      <div id="nameField" style="display:none;">
+        <label>Full Name</label>
+        <input type="text" id="nameInput" placeholder="Enter your full name" />
+      </div>
+      <label>Email Address</label>
+      <input type="email" id="emailInput" placeholder="Enter your email" required />
       <label>Password</label>
-      <input type="password" id="password" placeholder="Enter password" required />
-
-      <button type="submit" class="login-btn">Login →</button>
+      <input type="password" id="passwordInput" placeholder="Enter password" required />
+      <button type="submit" class="login-btn" id="submitBtn">Login →</button>
     </form>
 
     <a href="index.html" class="back-link">← Back to Home</a>
   </div>
 
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
+    const API = 'https://ayura-backend.onrender.com';
+    const GOOGLE_CLIENT_ID = '711470994443-un071me27an4b801tns5kd7loau6u3si.apps.googleusercontent.com';
     let currentRole = 'patient';
+    let isRegisterMode = false;
 
-    // Demo credentials
-    const CREDENTIALS = {
-      patient: { username: 'patient', password: '1234', redirect: 'patient_dashboard.html' },
-      doctor:  { username: 'doctor',  password: '1234', redirect: 'emr_view.html' }
-    };
+    function googleLogin() {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'email profile',
+        callback: async (tokenResponse) => {
+          if (tokenResponse.error) { showError('Google login failed'); return; }
+          try {
+            const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+            });
+            const googleUser = await userInfoRes.json();
+
+            const res = await fetch(`${API}/api/auth/google-login`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: googleUser.name,
+                email: googleUser.email,
+                googleId: googleUser.sub,
+                role: currentRole
+              })
+            });
+            const data = await res.json();
+            if (!res.ok) { showError(data.error || 'Google login failed'); return; }
+
+            localStorage.setItem('ayura_token', data.token);
+            localStorage.setItem('ayura_user', JSON.stringify(data.user));
+            localStorage.setItem('ayura_role', data.user.role);
+
+            showSuccess('Login successful! Redirecting...');
+            setTimeout(() => redirect(data.user.role), 1000);
+          } catch (err) {
+            showError('Google login failed. Try email login.');
+          }
+        }
+      });
+      client.requestAccessToken();
+    }
 
     function setRole(role) {
       currentRole = role;
-
       document.getElementById('patientTab').classList.toggle('active', role === 'patient');
       document.getElementById('doctorTab').classList.toggle('active', role === 'doctor');
+      clearMessages();
+    }
 
-      document.getElementById('userLabel').textContent =
-        role === 'patient' ? 'Patient ID / ABHA ID' : 'Doctor ID / Registration No.';
+    function toggleMode() {
+      isRegisterMode = !isRegisterMode;
+      document.getElementById('nameField').style.display = isRegisterMode ? 'block' : 'none';
+      document.getElementById('nameInput').required = isRegisterMode;
+      document.getElementById('submitBtn').textContent = isRegisterMode ? 'Register →' : 'Login →';
+      document.getElementById('formSubtitle').textContent = isRegisterMode ? 'Create your account' : 'Sign in to your account';
+      document.getElementById('toggleText').innerHTML = isRegisterMode
+        ? 'Already have an account? <a onclick="toggleMode()">Login here</a>'
+        : 'New user? <a onclick="toggleMode()">Register here</a>';
+      clearMessages();
+    }
 
-      document.getElementById('hintBox').innerHTML =
-        role === 'patient'
-          ? '<strong>Demo credentials:</strong><br>Username: <strong>patient</strong> &nbsp;|&nbsp; Password: <strong>1234</strong>'
-          : '<strong>Demo credentials:</strong><br>Username: <strong>doctor</strong> &nbsp;|&nbsp; Password: <strong>1234</strong>';
-
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
+    function clearMessages() {
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = '❌ ' + msg;
+      el.style.display = 'block';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+    function showSuccess(msg) {
+      const el = document.getElementById('successMsg');
+      el.textContent = '✅ ' + msg;
+      el.style.display = 'block';
       document.getElementById('errorMsg').style.display = 'none';
     }
 
-    function handleLogin(e) {
+    async function handleSubmit(e) {
       e.preventDefault();
-
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const creds    = CREDENTIALS[currentRole];
-      const errorMsg = document.getElementById('errorMsg');
-
-      if (username === creds.username && password === creds.password) {
-        errorMsg.style.display = 'none';
-        // Save role to sessionStorage so dashboard knows who is logged in
-        sessionStorage.setItem('ayura_role', currentRole);
-        sessionStorage.setItem('ayura_user', username);
-        window.location.href = creds.redirect;
-      } else {
-        errorMsg.style.display = 'block';
+      clearMessages();
+      const email    = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+      const btn      = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Please wait...';
+      try {
+        if (isRegisterMode) {
+          const name = document.getElementById('nameInput').value.trim();
+          if (!name) { showError('Please enter your full name'); return; }
+          const res = await fetch(`${API}/api/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, role: currentRole })
+          });
+          const data = await res.json();
+          if (!res.ok) { showError(data.error || 'Registration failed'); return; }
+          localStorage.setItem('ayura_token', data.token);
+          localStorage.setItem('ayura_user', JSON.stringify(data.user));
+          localStorage.setItem('ayura_role', data.user.role);
+          showSuccess('Registration successful! Redirecting...');
+          setTimeout(() => redirect(data.user.role), 1000);
+        } else {
+          const res = await fetch(`${API}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await res.json();
+          if (!res.ok) { showError(data.error || 'Login failed'); return; }
+          localStorage.setItem('ayura_token', data.token);
+          localStorage.setItem('ayura_user', JSON.stringify(data.user));
+          localStorage.setItem('ayura_role', data.user.role);
+          showSuccess('Login successful! Redirecting...');
+          setTimeout(() => redirect(data.user.role), 1000);
+        }
+      } catch (err) {
+        showError('Cannot connect to server. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = isRegisterMode ? 'Register →' : 'Login →';
       }
+    }
+
+    function redirect(role) {
+      window.location.href = role === 'doctor' ? 'emr_view.html' : 'patient_dashboard.html';
     }
   </script>
 
